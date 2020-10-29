@@ -26,11 +26,20 @@
     "skipClient": true,
     "creationTimestamp": 1603999427831,
     "testFrameworks": [],
-    "jhiPrefix": "jhi",
+    "jhiPrefix": "cm",
     "entitySuffix": "",
     "dtoSuffix": "DTO",
     "otherModules": [],
     "enableTranslation": false,
-    "blueprints": []
-  }
+    "blueprints": [],
+    "clientFramework": "angularX",
+    "skipUserManagement": true,
+    "enableHibernateCache": false,
+    "languages": ["en", "fr"],
+    "nativeLanguage": "en",
+    "skipServer": false,
+    "clientTheme": "none",
+    "clientThemeVariant": ""
+  },
+  "entities": []
 }
