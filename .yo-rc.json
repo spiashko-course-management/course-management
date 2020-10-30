@@ -41,5 +41,21 @@
     "clientTheme": "none",
     "clientThemeVariant": ""
   },
-  "entities": []
+  "entities": [
+    "Logo",
+    "UserLogo",
+    "CourseLogo",
+    "ExtendedUser",
+    "Artifact",
+    "Course",
+    "CourseDetails",
+    "Module",
+    "Lesson",
+    "LessonDetails",
+    "CompletedLesson",
+    "Enrollment",
+    "Payment",
+    "Student",
+    "Teacher"
+  ]
 }

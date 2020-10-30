@@ -22,6 +22,108 @@ application {
     dtoSuffix               DTO
     enableTranslation       false
   }
+  entities *
+}
+
+entity Logo {
+  data ImageBlob required
+}
+
+entity UserLogo {
+}
+
+entity CourseLogo {
+}
+
+entity ExtendedUser {
+}
+
+entity Artifact {
+  data AnyBlob required
+  originalName String required maxlength(50)
+}
+
+entity Course {
+  title String required minlength(3) maxlength(50)
+  price BigDecimal required min(0)
+}
+
+entity CourseDetails {
+  summary TextBlob required //basically md file
+}
+
+entity Module {
+  title String required minlength(3) maxlength(50)
+}
+
+entity Lesson {
+  order Integer required
+  title String required
+  type LessonType required
+}
+
+entity LessonDetails {
+  content TextBlob required
+}
+
+entity CompletedLesson {
+}
+
+entity Enrollment {
+}
+
+entity Payment {
+  sessionId String required
+  amount BigDecimal required
+  status PaymentStatus required
+}
+
+entity Student {
+}
+
+entity Teacher {
+}
+
+enum PaymentStatus {
+  PENDING,
+  SUCCESS,
+  FAIL
+}
+
+enum LessonType {
+  TEXT,
+  VIDEO
+}
+
+relationship OneToOne {
+  ExtendedUser{user required} to User with jpaDerivedIdentifier
+  Student{extendedUser required} to ExtendedUser with jpaDerivedIdentifier
+  Teacher{extendedUser required} to ExtendedUser with jpaDerivedIdentifier
+  CourseLogo{logo required} to Logo with jpaDerivedIdentifier
+  UserLogo{logo required} to Logo with jpaDerivedIdentifier
+  CourseDetails{course required} to Course{courseDetails required} with jpaDerivedIdentifier
+  LessonDetails{lesson required} to Lesson{LessonDetails required} with jpaDerivedIdentifier
+  Course to CourseLogo
+  ExtendedUser to UserLogo
+}
+
+relationship OneToMany {
+  Course{enrollments required} to Enrollment{course required}
+  Course{modules required} to Module{course required}
+  Course{artifacts} to Artifact
+  Course{payments} to Payment
+
+  Enrollment{CompletedLessons} to CompletedLesson{enrollment required}
+
+  Module{lessons required} to Lesson{module required}
+
+  Lesson{artifacts} to Artifact
+
+  Teacher{courses required} to Course{teacher required}
+
+  Student{enrollments required} to Enrollment{student required}
+  Student{payments required} to Payment{student required}
+
 }
 
 

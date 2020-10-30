@@ -1,0 +1,34 @@
+{
+  "name": "LessonDetails",
+  "fields": [
+    {
+      "fieldName": "content",
+      "fieldType": "byte[]",
+      "fieldTypeBlobContent": "text",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "lesson",
+      "otherEntityRelationshipName": "lessonDetails",
+      "relationshipValidateRules": "required",
+      "relationshipName": "lesson",
+      "otherEntityField": "id",
+      "ownerSide": true,
+      "useJPADerivedIdentifier": true
+    }
+  ],
+  "changelogDate": "20201030101749",
+  "entityTableName": "lesson_details",
+  "dto": "no",
+  "pagination": "no",
+  "service": "no",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": ["course_management"]
+}

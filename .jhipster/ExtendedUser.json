@@ -1,0 +1,35 @@
+{
+  "name": "ExtendedUser",
+  "fields": [],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "extendedUser",
+      "relationshipValidateRules": "required",
+      "relationshipName": "user",
+      "otherEntityField": "id",
+      "ownerSide": true,
+      "useJPADerivedIdentifier": true
+    },
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "userLogo",
+      "otherEntityRelationshipName": "extendedUser",
+      "relationshipName": "userLogo",
+      "otherEntityField": "id",
+      "ownerSide": true
+    }
+  ],
+  "changelogDate": "20201030101149",
+  "entityTableName": "extended_user",
+  "dto": "no",
+  "pagination": "no",
+  "service": "no",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": ["course_management"]
+}
