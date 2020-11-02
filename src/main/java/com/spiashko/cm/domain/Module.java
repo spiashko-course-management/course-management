@@ -1,27 +1,32 @@
 package com.spiashko.cm.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.spiashko.cm.crudbase.entity.BaseJournalEntity;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import javax.persistence.*;
-import javax.validation.constraints.*;
-
-import java.io.Serializable;
-import java.util.HashSet;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * A Module.
  */
+@Accessors(chain = true)
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "module")
-public class Module implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class Module extends BaseJournalEntity<UUID> {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
-    @SequenceGenerator(name = "sequenceGenerator")
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID id;
 
     @NotNull
     @Size(min = 3, max = 50)
@@ -29,96 +34,15 @@ public class Module implements Serializable {
     private String title;
 
     @OneToMany(mappedBy = "module")
-    private Set<Lesson> lessons = new HashSet<>();
+    private Set<Lesson> lessons;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @NotNull
     @JsonIgnoreProperties(value = "modules", allowSetters = true)
     private Course course;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public Module title(String title) {
-        this.title = title;
-        return this;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public Set<Lesson> getLessons() {
-        return lessons;
-    }
-
-    public Module lessons(Set<Lesson> lessons) {
-        this.lessons = lessons;
-        return this;
-    }
-
-    public Module addLessons(Lesson lesson) {
-        this.lessons.add(lesson);
-        lesson.setModule(this);
-        return this;
-    }
-
-    public Module removeLessons(Lesson lesson) {
-        this.lessons.remove(lesson);
-        lesson.setModule(null);
-        return this;
-    }
-
     public void setLessons(Set<Lesson> lessons) {
         this.lessons = lessons;
-    }
-
-    public Course getCourse() {
-        return course;
-    }
-
-    public Module course(Course course) {
-        this.course = course;
-        return this;
-    }
-
-    public void setCourse(Course course) {
-        this.course = course;
-    }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Module)) {
-            return false;
-        }
-        return id != null && id.equals(((Module) o).id);
-    }
-
-    @Override
-    public int hashCode() {
-        return 31;
-    }
-
-    // prettier-ignore
-    @Override
-    public String toString() {
-        return "Module{" +
-            "id=" + getId() +
-            ", title='" + getTitle() + "'" +
-            "}";
+        this.lessons.forEach(l -> l.setModule(this));
     }
 }

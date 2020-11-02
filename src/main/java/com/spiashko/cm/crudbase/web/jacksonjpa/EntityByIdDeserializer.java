@@ -66,6 +66,7 @@ public class EntityByIdDeserializer extends DelegatingDeserializer {
                         continue;
                     }
                     String idAsString = ((TextNode) valueNode).textValue();
+                    //TODO: check by BaseEntity what id class is
                     UUID uuid = UUID.fromString(idAsString);
                     Object reference = entityManager.getReference(field.getRawType(), uuid);
                     ReflectionUtils.setField(field.getAnnotated(), deserializedObject, reference);

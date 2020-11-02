@@ -2,13 +2,11 @@ package com.spiashko.cm.web.rest;
 
 import com.spiashko.cm.CourseManagementApp;
 import com.spiashko.cm.config.TestSecurityConfiguration;
-import com.spiashko.cm.domain.Student;
-import com.spiashko.cm.domain.ExtendedUser;
 import com.spiashko.cm.domain.Enrollment;
 import com.spiashko.cm.domain.Payment;
-import com.spiashko.cm.repository.StudentRepository;
+import com.spiashko.cm.domain.Student;
 import com.spiashko.cm.repository.ExtendedUserRepository;
-
+import com.spiashko.cm.repository.StudentRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +16,11 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+
 import javax.persistence.EntityManager;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -221,7 +219,7 @@ public class StudentResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(student.getId().intValue())));
     }
-    
+
     @Test
     @Transactional
     public void getStudent() throws Exception {

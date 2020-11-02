@@ -1,95 +1,48 @@
 package com.spiashko.cm.domain;
 
+import com.spiashko.cm.crudbase.entity.BaseJournalEntity;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import javax.validation.constraints.*;
-
-import java.io.Serializable;
+import javax.validation.constraints.NotNull;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * A LessonDetails.
  */
+@Accessors(chain = true)
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "lesson_details")
-public class LessonDetails implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class LessonDetails extends BaseJournalEntity<UUID> {
 
     @Id
-    private Long id;
+    private UUID id;
 
-    
     @Lob
     @Type(type = "org.hibernate.type.TextType")
     @Column(name = "content", nullable = false)
     private String content;
 
-    @OneToOne(optional = false)
-    @NotNull
+    //TODO create EntityById for Set<>
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinTable(name = "lesson_details_artifact",
+        joinColumns = {@JoinColumn(name = "lesson_details_id")},
+        inverseJoinColumns = {@JoinColumn(name = "artifact_id")}
+    )
+    private Set<Artifact> artifacts;
 
+    @NotNull
     @MapsId
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id")
     private Lesson lesson;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public LessonDetails content(String content) {
-        this.content = content;
-        return this;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public Lesson getLesson() {
-        return lesson;
-    }
-
-    public LessonDetails lesson(Lesson lesson) {
-        this.lesson = lesson;
-        return this;
-    }
-
-    public void setLesson(Lesson lesson) {
-        this.lesson = lesson;
-    }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof LessonDetails)) {
-            return false;
-        }
-        return id != null && id.equals(((LessonDetails) o).id);
-    }
-
-    @Override
-    public int hashCode() {
-        return 31;
-    }
-
-    // prettier-ignore
-    @Override
-    public String toString() {
-        return "LessonDetails{" +
-            "id=" + getId() +
-            ", content='" + getContent() + "'" +
-            "}";
-    }
 }

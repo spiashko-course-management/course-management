@@ -7,16 +7,14 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.domain.Persistable;
 
-
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 import java.io.Serializable;
-import java.util.UUID;
 
 @Getter
 @Setter
 @MappedSuperclass
-public abstract class BaseEntity implements Persistable<UUID>, Serializable {
+public abstract class BaseEntity<T> implements Persistable<T>, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -27,10 +25,10 @@ public abstract class BaseEntity implements Persistable<UUID>, Serializable {
         if (!(o instanceof BaseEntity))
             return false;
 
-        BaseEntity other = (BaseEntity) o;
+        BaseEntity<?> other = (BaseEntity<?>) o;
 
         return getId() != null &&
-                getId().equals(other.getId());
+            getId().equals(other.getId());
     }
 
     @Override
@@ -45,7 +43,7 @@ public abstract class BaseEntity implements Persistable<UUID>, Serializable {
 
     @JsonView({View.Retrieve.class, View.Update.class})
     @Override
-    public abstract UUID getId();
+    public abstract T getId();
 
     @JsonIgnore
     @Transient

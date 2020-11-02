@@ -18,6 +18,9 @@
 #    ROOT: DEBUG
 #    io.github.jhipster: DEBUG
 #    com.spiashko.cm: DEBUG
+logging:
+  level:
+    net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener: DEBUG
 
 spring:
   profiles:

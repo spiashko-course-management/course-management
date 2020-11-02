@@ -20,7 +20,7 @@ import java.time.Instant;
 @Setter
 @EntityListeners({AuditingEntityListener.class})
 @MappedSuperclass
-public abstract class BaseJournalEntity extends BaseEntity {
+public abstract class BaseJournalEntity<T> extends BaseEntity<T> {
 
     @JsonIgnore
     @NotNull

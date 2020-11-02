@@ -7,8 +7,6 @@ import lombok.Setter;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import java.util.Set;
 
 /**
  * A Teacher.
@@ -17,10 +15,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @Entity
-@DiscriminatorValue("TEACHER")
-public class Teacher extends User {
-
-    @OneToMany(mappedBy = "teacher")
-    private Set<Course> courses;
+@DiscriminatorValue("ADMIN")
+public class Admin extends User {
 
 }

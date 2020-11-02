@@ -6,9 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.NoRepositoryBean;
 
-import java.util.UUID;
-
 @NoRepositoryBean
-public interface BaseJournalRepository<T extends BaseJournalEntity>
-        extends JpaRepository<T, UUID>, JpaSpecificationExecutor<T> {
+public interface BaseJournalRepository<ID, T extends BaseJournalEntity<ID>>
+    extends JpaRepository<T, ID>, JpaSpecificationExecutor<T> {
 }

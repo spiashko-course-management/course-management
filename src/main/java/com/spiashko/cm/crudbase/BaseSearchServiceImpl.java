@@ -10,12 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 public abstract class BaseSearchServiceImpl<
-        E extends BaseJournalEntity,
-        R extends BaseJournalRepository<E>>
-        implements BaseSearchService<E> {
+    ID,
+    E extends BaseJournalEntity<ID>,
+    R extends BaseJournalRepository<ID, E>>
+    implements BaseSearchService<ID, E> {
 
     private final R repository;
     private final Class<E> persistentClass;
@@ -41,7 +41,7 @@ public abstract class BaseSearchServiceImpl<
 
     @Transactional(readOnly = true)
     @Override
-    public Optional<E> findOne(UUID id) {
+    public Optional<E> findOne(ID id) {
         return repository.findById(id);
     }
 
@@ -53,11 +53,11 @@ public abstract class BaseSearchServiceImpl<
 
     @Transactional(readOnly = true)
     @Override
-    public E findOneOrThrow(UUID id) {
+    public E findOneOrThrow(ID id) {
         Optional<E> result = findOne(id);
         if (!result.isPresent()) {
             throw new EntityNotFoundException(
-                    String.format("No %s entity with id %s exists!", persistentClass.getSimpleName(), id));
+                String.format("No %s entity with id %s exists!", persistentClass.getSimpleName(), id));
         }
         return result.get();
     }
@@ -68,7 +68,7 @@ public abstract class BaseSearchServiceImpl<
         Optional<E> result = findOne(spec);
         if (!result.isPresent()) {
             throw new EntityNotFoundException(
-                    String.format("No %s entity with spec %s exists!", persistentClass.getSimpleName(), spec));
+                String.format("No %s entity with spec %s exists!", persistentClass.getSimpleName(), spec));
         }
         return result.get();
     }

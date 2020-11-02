@@ -161,17 +161,6 @@ jhipster:
   #     max-age: 1800
   mail:
     from: course_management@localhost
-  swagger:
-    default-include-pattern: /api/.*
-    title: course_management API
-    description: course_management API documentation
-    version: 0.0.1
-    terms-of-service-url:
-    contact-name:
-    contact-url:
-    contact-email:
-    license: unlicensed
-    license-url:
   security:
     oauth2:
       audience:
