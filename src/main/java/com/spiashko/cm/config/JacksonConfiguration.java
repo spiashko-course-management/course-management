@@ -1,13 +1,21 @@
 package com.spiashko.cm.config;
 
+import com.fasterxml.jackson.databind.BeanDescription;
+import com.fasterxml.jackson.databind.DeserializationConfig;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.deser.BeanDeserializerModifier;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+import com.spiashko.cm.crudbase.web.jacksonjpa.EntityByIdDeserializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.zalando.problem.ProblemModule;
 import org.zalando.problem.violations.ConstraintViolationProblemModule;
+
+import javax.persistence.EntityManager;
 
 @Configuration
 public class JacksonConfiguration {
@@ -48,5 +56,19 @@ public class JacksonConfiguration {
     @Bean
     public ConstraintViolationProblemModule constraintViolationProblemModule() {
         return new ConstraintViolationProblemModule();
+    }
+
+    @Bean
+    public SimpleModule entityByIdDeserializerModule(EntityManager entityManager) {
+        SimpleModule module = new SimpleModule();
+        module.setDeserializerModifier(new BeanDeserializerModifier() {
+            @Override
+            public JsonDeserializer<?> modifyDeserializer(DeserializationConfig config,
+                                                          BeanDescription beanDescription,
+                                                          JsonDeserializer<?> originalDeserializer) {
+                return new EntityByIdDeserializer(originalDeserializer, entityManager, beanDescription);
+            }
+        });
+        return module;
     }
 }
