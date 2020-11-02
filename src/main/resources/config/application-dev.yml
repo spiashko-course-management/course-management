@@ -13,11 +13,11 @@
 # http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
 # ===================================================================
 
-logging:
-  level:
-    ROOT: DEBUG
-    io.github.jhipster: DEBUG
-    com.spiashko.cm: DEBUG
+#logging:
+#  level:
+#    ROOT: DEBUG
+#    io.github.jhipster: DEBUG
+#    com.spiashko.cm: DEBUG
 
 spring:
   profiles:

@@ -61,7 +61,7 @@ public class TeacherResource {
         if (Objects.isNull(teacher.getExtendedUser())) {
             throw new BadRequestAlertException("Invalid association value provided", ENTITY_NAME, "null");
         }
-        Long extendedUserId = teacher.getExtendedUser().getId();
+        String extendedUserId = teacher.getExtendedUser().getId();
         extendedUserRepository.findById(extendedUserId).ifPresent(teacher::extendedUser);
         Teacher result = teacherRepository.save(teacher);
         return ResponseEntity.created(new URI("/api/teachers/" + result.getId()))

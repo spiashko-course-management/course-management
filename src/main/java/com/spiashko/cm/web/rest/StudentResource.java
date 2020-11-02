@@ -61,7 +61,7 @@ public class StudentResource {
         if (Objects.isNull(student.getExtendedUser())) {
             throw new BadRequestAlertException("Invalid association value provided", ENTITY_NAME, "null");
         }
-        Long extendedUserId = student.getExtendedUser().getId();
+        String extendedUserId = student.getExtendedUser().getId();
         extendedUserRepository.findById(extendedUserId).ifPresent(student::extendedUser);
         Student result = studentRepository.save(student);
         return ResponseEntity.created(new URI("/api/students/" + result.getId()))

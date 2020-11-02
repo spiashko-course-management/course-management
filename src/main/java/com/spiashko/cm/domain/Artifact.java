@@ -21,7 +21,7 @@ public class Artifact implements Serializable {
     @SequenceGenerator(name = "sequenceGenerator")
     private Long id;
 
-    
+
     @Lob
     @Column(name = "data", nullable = false)
     private byte[] data;

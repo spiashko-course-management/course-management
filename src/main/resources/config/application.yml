@@ -128,6 +128,15 @@ server:
       cookie:
         http-only: true
 
+springdoc:
+  api-docs:
+    enabled: false
+  cache:
+    disabled: true
+  swagger-ui:
+    showCommonExtensions: true
+    showExtensions: true
+
 # Properties to be exposed on the /info management endpoint
 info:
   # Comma separated list of profiles that will trigger the ribbon to show
