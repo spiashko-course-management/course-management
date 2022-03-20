@@ -1,34 +1,34 @@
 {
-  "name": "CourseDetails",
+  "applications": ["course_management"],
+  "changelogDate": "20220320202514",
+  "dto": "no",
+  "embedded": false,
+  "entityTableName": "course_details",
   "fields": [
     {
       "fieldName": "summary",
       "fieldType": "byte[]",
       "fieldTypeBlobContent": "text",
-      "fieldValidateRules": ["required"]
+      "fieldValidateRules": ["required"],
+      "javadoc": "basically md file"
     }
   ],
+  "fluentMethods": true,
+  "jpaMetamodelFiltering": false,
+  "name": "CourseDetails",
+  "pagination": "no",
+  "readOnly": false,
   "relationships": [
     {
-      "relationshipType": "one-to-one",
+      "id": true,
       "otherEntityName": "course",
       "otherEntityRelationshipName": "courseDetails",
-      "relationshipValidateRules": "required",
-      "relationshipName": "course",
-      "otherEntityField": "id",
       "ownerSide": true,
+      "relationshipName": "course",
+      "relationshipType": "one-to-one",
+      "relationshipValidateRules": "required",
       "useJPADerivedIdentifier": true
     }
   ],
-  "changelogDate": "20201030101449",
-  "entityTableName": "course_details",
-  "dto": "no",
-  "pagination": "no",
-  "service": "no",
-  "jpaMetamodelFiltering": false,
-  "fluentMethods": true,
-  "readOnly": false,
-  "embedded": false,
-  "clientRootFolder": "",
-  "applications": ["course_management"]
+  "service": "no"
 }

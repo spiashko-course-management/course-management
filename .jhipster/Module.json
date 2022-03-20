@@ -1,40 +1,37 @@
 {
-  "name": "Module",
+  "applications": ["course_management"],
+  "changelogDate": "20220320202614",
+  "dto": "no",
+  "embedded": false,
+  "entityTableName": "module",
   "fields": [
     {
       "fieldName": "title",
       "fieldType": "String",
       "fieldValidateRules": ["required", "minlength", "maxlength"],
-      "fieldValidateRulesMinlength": "3",
-      "fieldValidateRulesMaxlength": "50"
+      "fieldValidateRulesMaxlength": "50",
+      "fieldValidateRulesMinlength": "3"
     }
   ],
+  "fluentMethods": true,
+  "jpaMetamodelFiltering": false,
+  "name": "Module",
+  "pagination": "no",
+  "readOnly": false,
   "relationships": [
     {
-      "relationshipType": "one-to-many",
       "otherEntityName": "lesson",
       "otherEntityRelationshipName": "module",
-      "relationshipValidateRules": "required",
-      "relationshipName": "lessons"
+      "relationshipName": "lessons",
+      "relationshipType": "one-to-many"
     },
     {
-      "relationshipType": "many-to-one",
       "otherEntityName": "course",
       "otherEntityRelationshipName": "modules",
-      "relationshipValidateRules": "required",
       "relationshipName": "course",
-      "otherEntityField": "id"
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
     }
   ],
-  "changelogDate": "20201030101549",
-  "entityTableName": "module",
-  "dto": "no",
-  "pagination": "no",
-  "service": "no",
-  "jpaMetamodelFiltering": false,
-  "fluentMethods": true,
-  "readOnly": false,
-  "embedded": false,
-  "clientRootFolder": "",
-  "applications": ["course_management"]
+  "service": "no"
 }

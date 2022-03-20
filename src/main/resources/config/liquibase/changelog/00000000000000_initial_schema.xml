@@ -3,10 +3,10 @@
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
     xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.9.xsd
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd
                         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
-        <changeSet id="00000000000000" author="jhipster">
+    <changeSet id="00000000000000" author="jhipster">
         <createSequence sequenceName="sequence_generator" startValue="1050" incrementBy="50"/>
     </changeSet>
 
@@ -72,65 +72,27 @@
         <loadData
                   file="config/liquibase/data/user.csv"
                   separator=";"
-                  tableName="cm_user">
-            <column name="id" type="numeric"/>
+                  tableName="cm_user"
+                  usePreparedStatements="true">
+            <column name="id" type="string"/>
             <column name="activated" type="boolean"/>
             <column name="created_date" type="timestamp"/>
         </loadData>
-        <dropDefaultValue tableName="cm_user" columnName="created_date" columnDataType="datetime"/>
+        <dropDefaultValue tableName="cm_user" columnName="created_date" columnDataType="${datetimeType}"/>
         <loadData
                   file="config/liquibase/data/authority.csv"
                   separator=";"
-                  tableName="cm_authority">
+                  tableName="cm_authority"
+                  usePreparedStatements="true">
             <column name="name" type="string"/>
         </loadData>
-
         <loadData
                   file="config/liquibase/data/user_authority.csv"
                   separator=";"
-                  tableName="cm_user_authority">
-            <column name="user_id" type="numeric"/>
+                  tableName="cm_user_authority"
+                  usePreparedStatements="true">
+            <column name="user_id" type="string"/>
         </loadData>
-        <createTable tableName="cm_persistent_audit_event">
-            <column name="event_id" type="bigint" >
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="principal" type="varchar(50)">
-                <constraints nullable="false" />
-            </column>
-            <column name="event_date" type="timestamp"/>
-            <column name="event_type" type="varchar(255)"/>
-        </createTable>
-
-        <createTable tableName="cm_persistent_audit_evt_data">
-            <column name="event_id" type="bigint">
-                <constraints nullable="false"/>
-            </column>
-            <column name="name" type="varchar(150)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="value" type="varchar(255)"/>
-        </createTable>
-        <addPrimaryKey columnNames="event_id, name" tableName="cm_persistent_audit_evt_data"/>
-
-        <createIndex indexName="idx_persistent_audit_event"
-                     tableName="cm_persistent_audit_event"
-                     unique="false">
-            <column name="principal" type="varchar(50)"/>
-            <column name="event_date" type="timestamp"/>
-        </createIndex>
-
-        <createIndex indexName="idx_persistent_audit_evt_data"
-                     tableName="cm_persistent_audit_evt_data"
-                     unique="false">
-            <column name="event_id" type="bigint"/>
-        </createIndex>
-
-        <addForeignKeyConstraint baseColumnNames="event_id"
-                                 baseTableName="cm_persistent_audit_evt_data"
-                                 constraintName="fk_evt_pers_audit_evt_data"
-                                 referencedColumnNames="event_id"
-                                 referencedTableName="cm_persistent_audit_event"/>
     </changeSet>
 
     <changeSet author="jhipster" id="00000000000002" context="test">
@@ -146,5 +108,32 @@
             <column name="offset_time" type="time"/>
             <column name="local_date" type="date"/>
         </createTable>
+    </changeSet>
+
+    <!--
+   Load sample data generated with Faker.js
+   - This data can be easily edited using a CSV editor (or even MS Excel) and
+     is located in the 'src/main/resources/config/liquibase/fake-data' directory
+   - By default this data is applied when running with the JHipster 'dev' profile.
+     This can be customized by adding or removing 'faker' in the 'spring.liquibase.contexts'
+     Spring Boot configuration key.
+-->
+    <changeSet id="00000000000000-user-fake-data" author="siarhei p" context="faker">
+        <loadData
+            file="config/liquibase/fake-data/user.csv"
+            separator=";"
+            tableName="cm_user">
+            <column name="id" type="string"/>
+            <column name="login" type="string"/>
+            <column name="first_name" type="string"/>
+            <column name="last_name" type="string"/>
+            <column name="image_url" type="string"/>
+            <column name="activated" type="boolean"/>
+            <column name="lang_key" type="string"/>
+            <column name="created_by" type="string"/>
+            <column name="created_date" type="timestamp"/>
+            <column name="last_modified_by" type="string"/>
+            <column name="last_modified_date" type="timestamp"/>
+        </loadData>
     </changeSet>
 </databaseChangeLog>

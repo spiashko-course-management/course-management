@@ -1,46 +1,44 @@
 package com.spiashko.cm.web.rest;
 
-import com.spiashko.cm.CourseManagementApp;
-import com.spiashko.cm.config.TestSecurityConfiguration;
-import com.spiashko.cm.domain.Course;
-import com.spiashko.cm.domain.Enrollment;
-import com.spiashko.cm.domain.Module;
-import com.spiashko.cm.domain.CourseDetails;
-import com.spiashko.cm.domain.Teacher;
-import com.spiashko.cm.repository.CourseRepository;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
-import javax.persistence.EntityManager;
-import java.math.BigDecimal;
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import com.spiashko.cm.IntegrationTest;
+import com.spiashko.cm.domain.Course;
+import com.spiashko.cm.domain.User;
+import com.spiashko.cm.repository.CourseRepository;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicLong;
+import javax.persistence.EntityManager;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
+
 /**
  * Integration tests for the {@link CourseResource} REST controller.
  */
-@SpringBootTest(classes = { CourseManagementApp.class, TestSecurityConfiguration.class })
+@IntegrationTest
 @AutoConfigureMockMvc
 @WithMockUser
-public class CourseResourceIT {
+class CourseResourceIT {
 
     private static final String DEFAULT_TITLE = "AAAAAAAAAA";
     private static final String UPDATED_TITLE = "BBBBBBBBBB";
 
-    private static final BigDecimal DEFAULT_PRICE = new BigDecimal(0);
-    private static final BigDecimal UPDATED_PRICE = new BigDecimal(1);
+    private static final String ENTITY_API_URL = "/api/courses";
+    private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
+
+    private static Random random = new Random();
+    private static AtomicLong count = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
 
     @Autowired
     private CourseRepository courseRepository;
@@ -60,51 +58,15 @@ public class CourseResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Course createEntity(EntityManager em) {
-        Course course = new Course()
-            .title(DEFAULT_TITLE)
-            .price(DEFAULT_PRICE);
+        Course course = new Course().title(DEFAULT_TITLE);
         // Add required entity
-        Enrollment enrollment;
-        if (TestUtil.findAll(em, Enrollment.class).isEmpty()) {
-            enrollment = EnrollmentResourceIT.createEntity(em);
-            em.persist(enrollment);
-            em.flush();
-        } else {
-            enrollment = TestUtil.findAll(em, Enrollment.class).get(0);
-        }
-        course.getEnrollments().add(enrollment);
-        // Add required entity
-        Module module;
-        if (TestUtil.findAll(em, Module.class).isEmpty()) {
-            module = ModuleResourceIT.createEntity(em);
-            em.persist(module);
-            em.flush();
-        } else {
-            module = TestUtil.findAll(em, Module.class).get(0);
-        }
-        course.getModules().add(module);
-        // Add required entity
-        CourseDetails courseDetails;
-        if (TestUtil.findAll(em, CourseDetails.class).isEmpty()) {
-            courseDetails = CourseDetailsResourceIT.createEntity(em);
-            em.persist(courseDetails);
-            em.flush();
-        } else {
-            courseDetails = TestUtil.findAll(em, CourseDetails.class).get(0);
-        }
-        course.setCourseDetails(courseDetails);
-        // Add required entity
-        Teacher teacher;
-        if (TestUtil.findAll(em, Teacher.class).isEmpty()) {
-            teacher = TeacherResourceIT.createEntity(em);
-            em.persist(teacher);
-            em.flush();
-        } else {
-            teacher = TestUtil.findAll(em, Teacher.class).get(0);
-        }
-        course.setTeacher(teacher);
+        User user = UserResourceIT.createEntity(em);
+        em.persist(user);
+        em.flush();
+        course.setTeacher(user);
         return course;
     }
+
     /**
      * Create an updated entity for this test.
      *
@@ -112,49 +74,12 @@ public class CourseResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Course createUpdatedEntity(EntityManager em) {
-        Course course = new Course()
-            .title(UPDATED_TITLE)
-            .price(UPDATED_PRICE);
+        Course course = new Course().title(UPDATED_TITLE);
         // Add required entity
-        Enrollment enrollment;
-        if (TestUtil.findAll(em, Enrollment.class).isEmpty()) {
-            enrollment = EnrollmentResourceIT.createUpdatedEntity(em);
-            em.persist(enrollment);
-            em.flush();
-        } else {
-            enrollment = TestUtil.findAll(em, Enrollment.class).get(0);
-        }
-        course.getEnrollments().add(enrollment);
-        // Add required entity
-        Module module;
-        if (TestUtil.findAll(em, Module.class).isEmpty()) {
-            module = ModuleResourceIT.createUpdatedEntity(em);
-            em.persist(module);
-            em.flush();
-        } else {
-            module = TestUtil.findAll(em, Module.class).get(0);
-        }
-        course.getModules().add(module);
-        // Add required entity
-        CourseDetails courseDetails;
-        if (TestUtil.findAll(em, CourseDetails.class).isEmpty()) {
-            courseDetails = CourseDetailsResourceIT.createUpdatedEntity(em);
-            em.persist(courseDetails);
-            em.flush();
-        } else {
-            courseDetails = TestUtil.findAll(em, CourseDetails.class).get(0);
-        }
-        course.setCourseDetails(courseDetails);
-        // Add required entity
-        Teacher teacher;
-        if (TestUtil.findAll(em, Teacher.class).isEmpty()) {
-            teacher = TeacherResourceIT.createUpdatedEntity(em);
-            em.persist(teacher);
-            em.flush();
-        } else {
-            teacher = TestUtil.findAll(em, Teacher.class).get(0);
-        }
-        course.setTeacher(teacher);
+        User user = UserResourceIT.createEntity(em);
+        em.persist(user);
+        em.flush();
+        course.setTeacher(user);
         return course;
     }
 
@@ -165,12 +90,13 @@ public class CourseResourceIT {
 
     @Test
     @Transactional
-    public void createCourse() throws Exception {
+    void createCourse() throws Exception {
         int databaseSizeBeforeCreate = courseRepository.findAll().size();
         // Create the Course
-        restCourseMockMvc.perform(post("/api/courses").with(csrf())
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(course)))
+        restCourseMockMvc
+            .perform(
+                post(ENTITY_API_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(course))
+            )
             .andExpect(status().isCreated());
 
         // Validate the Course in the database
@@ -178,21 +104,21 @@ public class CourseResourceIT {
         assertThat(courseList).hasSize(databaseSizeBeforeCreate + 1);
         Course testCourse = courseList.get(courseList.size() - 1);
         assertThat(testCourse.getTitle()).isEqualTo(DEFAULT_TITLE);
-        assertThat(testCourse.getPrice()).isEqualTo(DEFAULT_PRICE);
     }
 
     @Test
     @Transactional
-    public void createCourseWithExistingId() throws Exception {
-        int databaseSizeBeforeCreate = courseRepository.findAll().size();
-
+    void createCourseWithExistingId() throws Exception {
         // Create the Course with an existing ID
         course.setId(1L);
 
+        int databaseSizeBeforeCreate = courseRepository.findAll().size();
+
         // An entity with an existing ID cannot be created, so this API call must fail
-        restCourseMockMvc.perform(post("/api/courses").with(csrf())
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(course)))
+        restCourseMockMvc
+            .perform(
+                post(ENTITY_API_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(course))
+            )
             .andExpect(status().isBadRequest());
 
         // Validate the Course in the database
@@ -200,20 +126,19 @@ public class CourseResourceIT {
         assertThat(courseList).hasSize(databaseSizeBeforeCreate);
     }
 
-
     @Test
     @Transactional
-    public void checkTitleIsRequired() throws Exception {
+    void checkTitleIsRequired() throws Exception {
         int databaseSizeBeforeTest = courseRepository.findAll().size();
         // set the field null
         course.setTitle(null);
 
         // Create the Course, which fails.
 
-
-        restCourseMockMvc.perform(post("/api/courses").with(csrf())
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(course)))
+        restCourseMockMvc
+            .perform(
+                post(ENTITY_API_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(course))
+            )
             .andExpect(status().isBadRequest());
 
         List<Course> courseList = courseRepository.findAll();
@@ -222,63 +147,44 @@ public class CourseResourceIT {
 
     @Test
     @Transactional
-    public void checkPriceIsRequired() throws Exception {
-        int databaseSizeBeforeTest = courseRepository.findAll().size();
-        // set the field null
-        course.setPrice(null);
-
-        // Create the Course, which fails.
-
-
-        restCourseMockMvc.perform(post("/api/courses").with(csrf())
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(course)))
-            .andExpect(status().isBadRequest());
-
-        List<Course> courseList = courseRepository.findAll();
-        assertThat(courseList).hasSize(databaseSizeBeforeTest);
-    }
-
-    @Test
-    @Transactional
-    public void getAllCourses() throws Exception {
+    void getAllCourses() throws Exception {
         // Initialize the database
         courseRepository.saveAndFlush(course);
 
         // Get all the courseList
-        restCourseMockMvc.perform(get("/api/courses?sort=id,desc"))
+        restCourseMockMvc
+            .perform(get(ENTITY_API_URL + "?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(course.getId().intValue())))
-            .andExpect(jsonPath("$.[*].title").value(hasItem(DEFAULT_TITLE)))
-            .andExpect(jsonPath("$.[*].price").value(hasItem(DEFAULT_PRICE.intValue())));
+            .andExpect(jsonPath("$.[*].title").value(hasItem(DEFAULT_TITLE)));
     }
-    
+
     @Test
     @Transactional
-    public void getCourse() throws Exception {
+    void getCourse() throws Exception {
         // Initialize the database
         courseRepository.saveAndFlush(course);
 
         // Get the course
-        restCourseMockMvc.perform(get("/api/courses/{id}", course.getId()))
+        restCourseMockMvc
+            .perform(get(ENTITY_API_URL_ID, course.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(course.getId().intValue()))
-            .andExpect(jsonPath("$.title").value(DEFAULT_TITLE))
-            .andExpect(jsonPath("$.price").value(DEFAULT_PRICE.intValue()));
-    }
-    @Test
-    @Transactional
-    public void getNonExistingCourse() throws Exception {
-        // Get the course
-        restCourseMockMvc.perform(get("/api/courses/{id}", Long.MAX_VALUE))
-            .andExpect(status().isNotFound());
+            .andExpect(jsonPath("$.title").value(DEFAULT_TITLE));
     }
 
     @Test
     @Transactional
-    public void updateCourse() throws Exception {
+    void getNonExistingCourse() throws Exception {
+        // Get the course
+        restCourseMockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE)).andExpect(status().isNotFound());
+    }
+
+    @Test
+    @Transactional
+    void putNewCourse() throws Exception {
         // Initialize the database
         courseRepository.saveAndFlush(course);
 
@@ -288,13 +194,15 @@ public class CourseResourceIT {
         Course updatedCourse = courseRepository.findById(course.getId()).get();
         // Disconnect from session so that the updates on updatedCourse are not directly saved in db
         em.detach(updatedCourse);
-        updatedCourse
-            .title(UPDATED_TITLE)
-            .price(UPDATED_PRICE);
+        updatedCourse.title(UPDATED_TITLE);
 
-        restCourseMockMvc.perform(put("/api/courses").with(csrf())
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(updatedCourse)))
+        restCourseMockMvc
+            .perform(
+                put(ENTITY_API_URL_ID, updatedCourse.getId())
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(updatedCourse))
+            )
             .andExpect(status().isOk());
 
         // Validate the Course in the database
@@ -302,18 +210,22 @@ public class CourseResourceIT {
         assertThat(courseList).hasSize(databaseSizeBeforeUpdate);
         Course testCourse = courseList.get(courseList.size() - 1);
         assertThat(testCourse.getTitle()).isEqualTo(UPDATED_TITLE);
-        assertThat(testCourse.getPrice()).isEqualTo(UPDATED_PRICE);
     }
 
     @Test
     @Transactional
-    public void updateNonExistingCourse() throws Exception {
+    void putNonExistingCourse() throws Exception {
         int databaseSizeBeforeUpdate = courseRepository.findAll().size();
+        course.setId(count.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
-        restCourseMockMvc.perform(put("/api/courses").with(csrf())
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(course)))
+        restCourseMockMvc
+            .perform(
+                put(ENTITY_API_URL_ID, course.getId())
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(course))
+            )
             .andExpect(status().isBadRequest());
 
         // Validate the Course in the database
@@ -323,15 +235,175 @@ public class CourseResourceIT {
 
     @Test
     @Transactional
-    public void deleteCourse() throws Exception {
+    void putWithIdMismatchCourse() throws Exception {
+        int databaseSizeBeforeUpdate = courseRepository.findAll().size();
+        course.setId(count.incrementAndGet());
+
+        // If url ID doesn't match entity ID, it will throw BadRequestAlertException
+        restCourseMockMvc
+            .perform(
+                put(ENTITY_API_URL_ID, count.incrementAndGet())
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(course))
+            )
+            .andExpect(status().isBadRequest());
+
+        // Validate the Course in the database
+        List<Course> courseList = courseRepository.findAll();
+        assertThat(courseList).hasSize(databaseSizeBeforeUpdate);
+    }
+
+    @Test
+    @Transactional
+    void putWithMissingIdPathParamCourse() throws Exception {
+        int databaseSizeBeforeUpdate = courseRepository.findAll().size();
+        course.setId(count.incrementAndGet());
+
+        // If url ID doesn't match entity ID, it will throw BadRequestAlertException
+        restCourseMockMvc
+            .perform(
+                put(ENTITY_API_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(course))
+            )
+            .andExpect(status().isMethodNotAllowed());
+
+        // Validate the Course in the database
+        List<Course> courseList = courseRepository.findAll();
+        assertThat(courseList).hasSize(databaseSizeBeforeUpdate);
+    }
+
+    @Test
+    @Transactional
+    void partialUpdateCourseWithPatch() throws Exception {
+        // Initialize the database
+        courseRepository.saveAndFlush(course);
+
+        int databaseSizeBeforeUpdate = courseRepository.findAll().size();
+
+        // Update the course using partial update
+        Course partialUpdatedCourse = new Course();
+        partialUpdatedCourse.setId(course.getId());
+
+        restCourseMockMvc
+            .perform(
+                patch(ENTITY_API_URL_ID, partialUpdatedCourse.getId())
+                    .with(csrf())
+                    .contentType("application/merge-patch+json")
+                    .content(TestUtil.convertObjectToJsonBytes(partialUpdatedCourse))
+            )
+            .andExpect(status().isOk());
+
+        // Validate the Course in the database
+        List<Course> courseList = courseRepository.findAll();
+        assertThat(courseList).hasSize(databaseSizeBeforeUpdate);
+        Course testCourse = courseList.get(courseList.size() - 1);
+        assertThat(testCourse.getTitle()).isEqualTo(DEFAULT_TITLE);
+    }
+
+    @Test
+    @Transactional
+    void fullUpdateCourseWithPatch() throws Exception {
+        // Initialize the database
+        courseRepository.saveAndFlush(course);
+
+        int databaseSizeBeforeUpdate = courseRepository.findAll().size();
+
+        // Update the course using partial update
+        Course partialUpdatedCourse = new Course();
+        partialUpdatedCourse.setId(course.getId());
+
+        partialUpdatedCourse.title(UPDATED_TITLE);
+
+        restCourseMockMvc
+            .perform(
+                patch(ENTITY_API_URL_ID, partialUpdatedCourse.getId())
+                    .with(csrf())
+                    .contentType("application/merge-patch+json")
+                    .content(TestUtil.convertObjectToJsonBytes(partialUpdatedCourse))
+            )
+            .andExpect(status().isOk());
+
+        // Validate the Course in the database
+        List<Course> courseList = courseRepository.findAll();
+        assertThat(courseList).hasSize(databaseSizeBeforeUpdate);
+        Course testCourse = courseList.get(courseList.size() - 1);
+        assertThat(testCourse.getTitle()).isEqualTo(UPDATED_TITLE);
+    }
+
+    @Test
+    @Transactional
+    void patchNonExistingCourse() throws Exception {
+        int databaseSizeBeforeUpdate = courseRepository.findAll().size();
+        course.setId(count.incrementAndGet());
+
+        // If the entity doesn't have an ID, it will throw BadRequestAlertException
+        restCourseMockMvc
+            .perform(
+                patch(ENTITY_API_URL_ID, course.getId())
+                    .with(csrf())
+                    .contentType("application/merge-patch+json")
+                    .content(TestUtil.convertObjectToJsonBytes(course))
+            )
+            .andExpect(status().isBadRequest());
+
+        // Validate the Course in the database
+        List<Course> courseList = courseRepository.findAll();
+        assertThat(courseList).hasSize(databaseSizeBeforeUpdate);
+    }
+
+    @Test
+    @Transactional
+    void patchWithIdMismatchCourse() throws Exception {
+        int databaseSizeBeforeUpdate = courseRepository.findAll().size();
+        course.setId(count.incrementAndGet());
+
+        // If url ID doesn't match entity ID, it will throw BadRequestAlertException
+        restCourseMockMvc
+            .perform(
+                patch(ENTITY_API_URL_ID, count.incrementAndGet())
+                    .with(csrf())
+                    .contentType("application/merge-patch+json")
+                    .content(TestUtil.convertObjectToJsonBytes(course))
+            )
+            .andExpect(status().isBadRequest());
+
+        // Validate the Course in the database
+        List<Course> courseList = courseRepository.findAll();
+        assertThat(courseList).hasSize(databaseSizeBeforeUpdate);
+    }
+
+    @Test
+    @Transactional
+    void patchWithMissingIdPathParamCourse() throws Exception {
+        int databaseSizeBeforeUpdate = courseRepository.findAll().size();
+        course.setId(count.incrementAndGet());
+
+        // If url ID doesn't match entity ID, it will throw BadRequestAlertException
+        restCourseMockMvc
+            .perform(
+                patch(ENTITY_API_URL)
+                    .with(csrf())
+                    .contentType("application/merge-patch+json")
+                    .content(TestUtil.convertObjectToJsonBytes(course))
+            )
+            .andExpect(status().isMethodNotAllowed());
+
+        // Validate the Course in the database
+        List<Course> courseList = courseRepository.findAll();
+        assertThat(courseList).hasSize(databaseSizeBeforeUpdate);
+    }
+
+    @Test
+    @Transactional
+    void deleteCourse() throws Exception {
         // Initialize the database
         courseRepository.saveAndFlush(course);
 
         int databaseSizeBeforeDelete = courseRepository.findAll().size();
 
         // Delete the course
-        restCourseMockMvc.perform(delete("/api/courses/{id}", course.getId()).with(csrf())
-            .accept(MediaType.APPLICATION_JSON))
+        restCourseMockMvc
+            .perform(delete(ENTITY_API_URL_ID, course.getId()).with(csrf()).accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item

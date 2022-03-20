@@ -1,34 +1,34 @@
 {
-  "name": "LessonDetails",
+  "applications": ["course_management"],
+  "changelogDate": "20220320202814",
+  "dto": "no",
+  "embedded": false,
+  "entityTableName": "lesson_details",
   "fields": [
     {
       "fieldName": "content",
       "fieldType": "byte[]",
       "fieldTypeBlobContent": "text",
-      "fieldValidateRules": ["required"]
+      "fieldValidateRules": ["required"],
+      "javadoc": "basically md file with link to video if needed"
     }
   ],
+  "fluentMethods": true,
+  "jpaMetamodelFiltering": false,
+  "name": "LessonDetails",
+  "pagination": "no",
+  "readOnly": false,
   "relationships": [
     {
-      "relationshipType": "one-to-one",
+      "id": true,
       "otherEntityName": "lesson",
       "otherEntityRelationshipName": "lessonDetails",
-      "relationshipValidateRules": "required",
-      "relationshipName": "lesson",
-      "otherEntityField": "id",
       "ownerSide": true,
+      "relationshipName": "lesson",
+      "relationshipType": "one-to-one",
+      "relationshipValidateRules": "required",
       "useJPADerivedIdentifier": true
     }
   ],
-  "changelogDate": "20201030101749",
-  "entityTableName": "lesson_details",
-  "dto": "no",
-  "pagination": "no",
-  "service": "no",
-  "jpaMetamodelFiltering": false,
-  "fluentMethods": true,
-  "readOnly": false,
-  "embedded": false,
-  "clientRootFolder": "",
-  "applications": ["course_management"]
+  "service": "no"
 }

@@ -3,21 +3,21 @@ package com.spiashko.cm.web.rest;
 import com.spiashko.cm.domain.Module;
 import com.spiashko.cm.repository.ModuleRepository;
 import com.spiashko.cm.web.rest.errors.BadRequestAlertException;
-
-import io.github.jhipster.web.util.HeaderUtil;
-import io.github.jhipster.web.util.ResponseUtil;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Optional;
+import tech.jhipster.web.util.HeaderUtil;
+import tech.jhipster.web.util.ResponseUtil;
 
 /**
  * REST controller for managing {@link com.spiashko.cm.domain.Module}.
@@ -54,30 +54,89 @@ public class ModuleResource {
             throw new BadRequestAlertException("A new module cannot already have an ID", ENTITY_NAME, "idexists");
         }
         Module result = moduleRepository.save(module);
-        return ResponseEntity.created(new URI("/api/modules/" + result.getId()))
+        return ResponseEntity
+            .created(new URI("/api/modules/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
 
     /**
-     * {@code PUT  /modules} : Updates an existing module.
+     * {@code PUT  /modules/:id} : Updates an existing module.
      *
+     * @param id the id of the module to save.
      * @param module the module to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated module,
      * or with status {@code 400 (Bad Request)} if the module is not valid,
      * or with status {@code 500 (Internal Server Error)} if the module couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping("/modules")
-    public ResponseEntity<Module> updateModule(@Valid @RequestBody Module module) throws URISyntaxException {
-        log.debug("REST request to update Module : {}", module);
+    @PutMapping("/modules/{id}")
+    public ResponseEntity<Module> updateModule(
+        @PathVariable(value = "id", required = false) final Long id,
+        @Valid @RequestBody Module module
+    ) throws URISyntaxException {
+        log.debug("REST request to update Module : {}, {}", id, module);
         if (module.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+        if (!Objects.equals(id, module.getId())) {
+            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+        }
+
+        if (!moduleRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+
         Module result = moduleRepository.save(module);
-        return ResponseEntity.ok()
+        return ResponseEntity
+            .ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, module.getId().toString()))
             .body(result);
+    }
+
+    /**
+     * {@code PATCH  /modules/:id} : Partial updates given fields of an existing module, field will ignore if it is null
+     *
+     * @param id the id of the module to save.
+     * @param module the module to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated module,
+     * or with status {@code 400 (Bad Request)} if the module is not valid,
+     * or with status {@code 404 (Not Found)} if the module is not found,
+     * or with status {@code 500 (Internal Server Error)} if the module couldn't be updated.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PatchMapping(value = "/modules/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    public ResponseEntity<Module> partialUpdateModule(
+        @PathVariable(value = "id", required = false) final Long id,
+        @NotNull @RequestBody Module module
+    ) throws URISyntaxException {
+        log.debug("REST request to partial update Module partially : {}, {}", id, module);
+        if (module.getId() == null) {
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        if (!Objects.equals(id, module.getId())) {
+            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+        }
+
+        if (!moduleRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+
+        Optional<Module> result = moduleRepository
+            .findById(module.getId())
+            .map(existingModule -> {
+                if (module.getTitle() != null) {
+                    existingModule.setTitle(module.getTitle());
+                }
+
+                return existingModule;
+            })
+            .map(moduleRepository::save);
+
+        return ResponseUtil.wrapOrNotFound(
+            result,
+            HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, module.getId().toString())
+        );
     }
 
     /**
@@ -114,6 +173,9 @@ public class ModuleResource {
     public ResponseEntity<Void> deleteModule(@PathVariable Long id) {
         log.debug("REST request to delete Module : {}", id);
         moduleRepository.deleteById(id);
-        return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString())).build();
+        return ResponseEntity
+            .noContent()
+            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString()))
+            .build();
     }
 }

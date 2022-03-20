@@ -1,39 +1,36 @@
 {
-  "name": "Enrollment",
+  "applications": ["course_management"],
+  "changelogDate": "20220320203014",
+  "dto": "no",
+  "embedded": false,
+  "entityTableName": "enrollment",
   "fields": [],
+  "fluentMethods": true,
+  "jpaMetamodelFiltering": false,
+  "name": "Enrollment",
+  "pagination": "no",
+  "readOnly": false,
   "relationships": [
     {
-      "relationshipType": "one-to-many",
       "otherEntityName": "completedLesson",
       "otherEntityRelationshipName": "enrollment",
-      "relationshipName": "completedLessons"
+      "relationshipName": "completedLessons",
+      "relationshipType": "one-to-many"
     },
     {
-      "relationshipType": "many-to-one",
       "otherEntityName": "course",
-      "otherEntityRelationshipName": "enrollments",
-      "relationshipValidateRules": "required",
+      "otherEntityRelationshipName": "enrollment",
       "relationshipName": "course",
-      "otherEntityField": "id"
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
     },
     {
-      "relationshipType": "many-to-one",
-      "otherEntityName": "student",
-      "otherEntityRelationshipName": "enrollments",
-      "relationshipValidateRules": "required",
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "enrollment",
       "relationshipName": "student",
-      "otherEntityField": "id"
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
     }
   ],
-  "changelogDate": "20201030101949",
-  "entityTableName": "enrollment",
-  "dto": "no",
-  "pagination": "no",
-  "service": "no",
-  "jpaMetamodelFiltering": false,
-  "fluentMethods": true,
-  "readOnly": false,
-  "embedded": false,
-  "clientRootFolder": "",
-  "applications": ["course_management"]
+  "service": "no"
 }

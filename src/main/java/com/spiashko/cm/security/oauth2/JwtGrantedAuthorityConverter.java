@@ -1,12 +1,11 @@
 package com.spiashko.cm.security.oauth2;
 
 import com.spiashko.cm.security.SecurityUtils;
+import java.util.Collection;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
-
-import java.util.Collection;
 
 @Component
 public class JwtGrantedAuthorityConverter implements Converter<Jwt, Collection<GrantedAuthority>> {

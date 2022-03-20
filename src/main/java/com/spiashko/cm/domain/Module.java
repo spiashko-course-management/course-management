@@ -1,13 +1,11 @@
 package com.spiashko.cm.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-import javax.persistence.*;
-import javax.validation.constraints.*;
-
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
+import javax.persistence.*;
+import javax.validation.constraints.*;
 
 /**
  * A Module.
@@ -21,6 +19,7 @@ public class Module implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
     @SequenceGenerator(name = "sequenceGenerator")
+    @Column(name = "id")
     private Long id;
 
     @NotNull
@@ -29,16 +28,23 @@ public class Module implements Serializable {
     private String title;
 
     @OneToMany(mappedBy = "module")
+    @JsonIgnoreProperties(value = { "module" }, allowSetters = true)
     private Set<Lesson> lessons = new HashSet<>();
 
     @ManyToOne(optional = false)
     @NotNull
-    @JsonIgnoreProperties(value = "modules", allowSetters = true)
+    @JsonIgnoreProperties(value = { "modules", "teacher" }, allowSetters = true)
     private Course course;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
+
     public Long getId() {
-        return id;
+        return this.id;
+    }
+
+    public Module id(Long id) {
+        this.setId(id);
+        return this;
     }
 
     public void setId(Long id) {
@@ -46,11 +52,11 @@ public class Module implements Serializable {
     }
 
     public String getTitle() {
-        return title;
+        return this.title;
     }
 
     public Module title(String title) {
-        this.title = title;
+        this.setTitle(title);
         return this;
     }
 
@@ -59,11 +65,21 @@ public class Module implements Serializable {
     }
 
     public Set<Lesson> getLessons() {
-        return lessons;
+        return this.lessons;
+    }
+
+    public void setLessons(Set<Lesson> lessons) {
+        if (this.lessons != null) {
+            this.lessons.forEach(i -> i.setModule(null));
+        }
+        if (lessons != null) {
+            lessons.forEach(i -> i.setModule(this));
+        }
+        this.lessons = lessons;
     }
 
     public Module lessons(Set<Lesson> lessons) {
-        this.lessons = lessons;
+        this.setLessons(lessons);
         return this;
     }
 
@@ -79,22 +95,19 @@ public class Module implements Serializable {
         return this;
     }
 
-    public void setLessons(Set<Lesson> lessons) {
-        this.lessons = lessons;
-    }
-
     public Course getCourse() {
-        return course;
-    }
-
-    public Module course(Course course) {
-        this.course = course;
-        return this;
+        return this.course;
     }
 
     public void setCourse(Course course) {
         this.course = course;
     }
+
+    public Module course(Course course) {
+        this.setCourse(course);
+        return this;
+    }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -110,7 +123,8 @@ public class Module implements Serializable {
 
     @Override
     public int hashCode() {
-        return 31;
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        return getClass().hashCode();
     }
 
     // prettier-ignore
