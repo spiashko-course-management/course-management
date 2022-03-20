@@ -38,6 +38,7 @@ application {
 
 entity Course {
   title String required minlength(3) maxlength(50)
+  imageUrl String required minlength(3) maxlength(200)
 }
 
 entity CourseDetails {

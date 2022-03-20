@@ -29,6 +29,10 @@ export const CourseDetail = (props: RouteComponentProps<{ id: string }>) => {
             <span id="title">Title</span>
           </dt>
           <dd>{courseEntity.title}</dd>
+          <dt>
+            <span id="imageUrl">Image Url</span>
+          </dt>
+          <dd>{courseEntity.imageUrl}</dd>
           <dt>Teacher</dt>
           <dd>{courseEntity.teacher ? courseEntity.teacher.id : ''}</dd>
         </dl>

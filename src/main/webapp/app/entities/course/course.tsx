@@ -104,6 +104,9 @@ export const Course = (props: RouteComponentProps<{ url: string }>) => {
                 <th className="hand" onClick={sort('title')}>
                   Title <FontAwesomeIcon icon="sort" />
                 </th>
+                <th className="hand" onClick={sort('imageUrl')}>
+                  Image Url <FontAwesomeIcon icon="sort" />
+                </th>
                 <th>
                   Teacher <FontAwesomeIcon icon="sort" />
                 </th>
@@ -119,6 +122,7 @@ export const Course = (props: RouteComponentProps<{ url: string }>) => {
                     </Button>
                   </td>
                   <td>{course.title}</td>
+                  <td>{course.imageUrl}</td>
                   <td>{course.teacher ? course.teacher.id : ''}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">

@@ -17,6 +17,9 @@
             <column name="title" type="varchar(50)">
                 <constraints nullable="false" />
             </column>
+            <column name="image_url" type="varchar(200)">
+                <constraints nullable="false" />
+            </column>
             <column name="teacher_id" type="varchar(100)">
                 <constraints nullable="false" />
             </column>
@@ -42,6 +45,7 @@
                   usePreparedStatements="true">
             <column name="id" type="numeric"/>
             <column name="title" type="string"/>
+            <column name="image_url" type="string"/>
             <column name="teacher_id" type="string"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
         </loadData>

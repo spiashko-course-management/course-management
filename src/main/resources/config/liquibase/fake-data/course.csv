@@ -1,11 +1,11 @@
-id;title;teacher_id
-1;Tender Is the Night;5b875210-6c55-4460-86e7-b092dd6c0e6e
-2;Carrion Comfort;cff72699-21ff-4743-b67d-e3809f2519fa
-3;Waiting for the Barbarians;5b875210-6c55-4460-86e7-b092dd6c0e6e
-4;Fame Is the Spur;5b875210-6c55-4460-86e7-b092dd6c0e6e
-5;The Soldier's Art;cff72699-21ff-4743-b67d-e3809f2519fa
-6;Edna O'Brien;cff72699-21ff-4743-b67d-e3809f2519fa
-7;The Cricket on the Hearth;cff72699-21ff-4743-b67d-e3809f2519fa
-8;The Green Bay Tree;cff72699-21ff-4743-b67d-e3809f2519fa
-9;A Glass of Blessings;5b875210-6c55-4460-86e7-b092dd6c0e6e
-10;Clouds of Witness;cff72699-21ff-4743-b67d-e3809f2519fa
+id;title;image_url;teacher_id
+1;Tender Is the Night;https://picsum.photos/200;5b875210-6c55-4460-86e7-b092dd6c0e6e
+2;Carrion Comfort;https://picsum.photos/200;cff72699-21ff-4743-b67d-e3809f2519fa
+3;Waiting for the Barbarians;https://picsum.photos/200;5b875210-6c55-4460-86e7-b092dd6c0e6e
+4;Fame Is the Spur;https://picsum.photos/200;5b875210-6c55-4460-86e7-b092dd6c0e6e
+5;The Soldier's Art;https://picsum.photos/200;cff72699-21ff-4743-b67d-e3809f2519fa
+6;Edna O'Brien;https://picsum.photos/200;cff72699-21ff-4743-b67d-e3809f2519fa
+7;The Cricket on the Hearth;https://picsum.photos/200;cff72699-21ff-4743-b67d-e3809f2519fa
+8;The Green Bay Tree;https://picsum.photos/200;cff72699-21ff-4743-b67d-e3809f2519fa
+9;A Glass of Blessings;https://picsum.photos/200;5b875210-6c55-4460-86e7-b092dd6c0e6e
+10;Clouds of Witness;https://picsum.photos/200;cff72699-21ff-4743-b67d-e3809f2519fa

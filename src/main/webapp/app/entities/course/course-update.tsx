@@ -92,6 +92,18 @@ export const CourseUpdate = (props: RouteComponentProps<{ id: string }>) => {
                   maxLength: { value: 50, message: 'This field cannot be longer than 50 characters.' },
                 }}
               />
+              <ValidatedField
+                label="Image Url"
+                id="course-imageUrl"
+                name="imageUrl"
+                data-cy="imageUrl"
+                type="text"
+                validate={{
+                  required: { value: true, message: 'This field is required.' },
+                  minLength: { value: 3, message: 'This field is required to be at least 3 characters.' },
+                  maxLength: { value: 200, message: 'This field cannot be longer than 200 characters.' },
+                }}
+              />
               <ValidatedField id="course-teacher" name="teacher" data-cy="teacher" label="Teacher" type="select" required>
                 <option value="" key="0" />
                 {users
