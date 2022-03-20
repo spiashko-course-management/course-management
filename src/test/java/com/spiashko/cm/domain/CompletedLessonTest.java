@@ -1,13 +1,14 @@
 package com.spiashko.cm.domain;
 
-import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
-import com.spiashko.cm.web.rest.TestUtil;
 
-public class CompletedLessonTest {
+import com.spiashko.cm.web.rest.TestUtil;
+import org.junit.jupiter.api.Test;
+
+class CompletedLessonTest {
 
     @Test
-    public void equalsVerifier() throws Exception {
+    void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(CompletedLesson.class);
         CompletedLesson completedLesson1 = new CompletedLesson();
         completedLesson1.setId(1L);

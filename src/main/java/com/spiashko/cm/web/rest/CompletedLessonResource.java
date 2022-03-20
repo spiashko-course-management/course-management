@@ -3,21 +3,21 @@ package com.spiashko.cm.web.rest;
 import com.spiashko.cm.domain.CompletedLesson;
 import com.spiashko.cm.repository.CompletedLessonRepository;
 import com.spiashko.cm.web.rest.errors.BadRequestAlertException;
-
-import io.github.jhipster.web.util.HeaderUtil;
-import io.github.jhipster.web.util.ResponseUtil;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Optional;
+import tech.jhipster.web.util.HeaderUtil;
+import tech.jhipster.web.util.ResponseUtil;
 
 /**
  * REST controller for managing {@link com.spiashko.cm.domain.CompletedLesson}.
@@ -48,36 +48,92 @@ public class CompletedLessonResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/completed-lessons")
-    public ResponseEntity<CompletedLesson> createCompletedLesson(@Valid @RequestBody CompletedLesson completedLesson) throws URISyntaxException {
+    public ResponseEntity<CompletedLesson> createCompletedLesson(@Valid @RequestBody CompletedLesson completedLesson)
+        throws URISyntaxException {
         log.debug("REST request to save CompletedLesson : {}", completedLesson);
         if (completedLesson.getId() != null) {
             throw new BadRequestAlertException("A new completedLesson cannot already have an ID", ENTITY_NAME, "idexists");
         }
         CompletedLesson result = completedLessonRepository.save(completedLesson);
-        return ResponseEntity.created(new URI("/api/completed-lessons/" + result.getId()))
+        return ResponseEntity
+            .created(new URI("/api/completed-lessons/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
 
     /**
-     * {@code PUT  /completed-lessons} : Updates an existing completedLesson.
+     * {@code PUT  /completed-lessons/:id} : Updates an existing completedLesson.
      *
+     * @param id the id of the completedLesson to save.
      * @param completedLesson the completedLesson to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated completedLesson,
      * or with status {@code 400 (Bad Request)} if the completedLesson is not valid,
      * or with status {@code 500 (Internal Server Error)} if the completedLesson couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping("/completed-lessons")
-    public ResponseEntity<CompletedLesson> updateCompletedLesson(@Valid @RequestBody CompletedLesson completedLesson) throws URISyntaxException {
-        log.debug("REST request to update CompletedLesson : {}", completedLesson);
+    @PutMapping("/completed-lessons/{id}")
+    public ResponseEntity<CompletedLesson> updateCompletedLesson(
+        @PathVariable(value = "id", required = false) final Long id,
+        @Valid @RequestBody CompletedLesson completedLesson
+    ) throws URISyntaxException {
+        log.debug("REST request to update CompletedLesson : {}, {}", id, completedLesson);
         if (completedLesson.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+        if (!Objects.equals(id, completedLesson.getId())) {
+            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+        }
+
+        if (!completedLessonRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+
         CompletedLesson result = completedLessonRepository.save(completedLesson);
-        return ResponseEntity.ok()
+        return ResponseEntity
+            .ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, completedLesson.getId().toString()))
             .body(result);
+    }
+
+    /**
+     * {@code PATCH  /completed-lessons/:id} : Partial updates given fields of an existing completedLesson, field will ignore if it is null
+     *
+     * @param id the id of the completedLesson to save.
+     * @param completedLesson the completedLesson to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated completedLesson,
+     * or with status {@code 400 (Bad Request)} if the completedLesson is not valid,
+     * or with status {@code 404 (Not Found)} if the completedLesson is not found,
+     * or with status {@code 500 (Internal Server Error)} if the completedLesson couldn't be updated.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PatchMapping(value = "/completed-lessons/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    public ResponseEntity<CompletedLesson> partialUpdateCompletedLesson(
+        @PathVariable(value = "id", required = false) final Long id,
+        @NotNull @RequestBody CompletedLesson completedLesson
+    ) throws URISyntaxException {
+        log.debug("REST request to partial update CompletedLesson partially : {}, {}", id, completedLesson);
+        if (completedLesson.getId() == null) {
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        if (!Objects.equals(id, completedLesson.getId())) {
+            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+        }
+
+        if (!completedLessonRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+
+        Optional<CompletedLesson> result = completedLessonRepository
+            .findById(completedLesson.getId())
+            .map(existingCompletedLesson -> {
+                return existingCompletedLesson;
+            })
+            .map(completedLessonRepository::save);
+
+        return ResponseUtil.wrapOrNotFound(
+            result,
+            HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, completedLesson.getId().toString())
+        );
     }
 
     /**
@@ -114,6 +170,9 @@ public class CompletedLessonResource {
     public ResponseEntity<Void> deleteCompletedLesson(@PathVariable Long id) {
         log.debug("REST request to delete CompletedLesson : {}", id);
         completedLessonRepository.deleteById(id);
-        return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString())).build();
+        return ResponseEntity
+            .noContent()
+            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString()))
+            .build();
     }
 }

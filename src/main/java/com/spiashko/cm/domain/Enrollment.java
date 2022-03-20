@@ -1,13 +1,11 @@
 package com.spiashko.cm.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-import javax.persistence.*;
-import javax.validation.constraints.*;
-
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
+import javax.persistence.*;
+import javax.validation.constraints.*;
 
 /**
  * A Enrollment.
@@ -21,24 +19,31 @@ public class Enrollment implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
     @SequenceGenerator(name = "sequenceGenerator")
+    @Column(name = "id")
     private Long id;
 
     @OneToMany(mappedBy = "enrollment")
+    @JsonIgnoreProperties(value = { "lesson", "enrollment" }, allowSetters = true)
     private Set<CompletedLesson> completedLessons = new HashSet<>();
 
     @ManyToOne(optional = false)
     @NotNull
-    @JsonIgnoreProperties(value = "enrollments", allowSetters = true)
+    @JsonIgnoreProperties(value = { "modules", "teacher" }, allowSetters = true)
     private Course course;
 
     @ManyToOne(optional = false)
     @NotNull
-    @JsonIgnoreProperties(value = "enrollments", allowSetters = true)
-    private Student student;
+    private User student;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
+
     public Long getId() {
-        return id;
+        return this.id;
+    }
+
+    public Enrollment id(Long id) {
+        this.setId(id);
+        return this;
     }
 
     public void setId(Long id) {
@@ -46,11 +51,21 @@ public class Enrollment implements Serializable {
     }
 
     public Set<CompletedLesson> getCompletedLessons() {
-        return completedLessons;
+        return this.completedLessons;
+    }
+
+    public void setCompletedLessons(Set<CompletedLesson> completedLessons) {
+        if (this.completedLessons != null) {
+            this.completedLessons.forEach(i -> i.setEnrollment(null));
+        }
+        if (completedLessons != null) {
+            completedLessons.forEach(i -> i.setEnrollment(this));
+        }
+        this.completedLessons = completedLessons;
     }
 
     public Enrollment completedLessons(Set<CompletedLesson> completedLessons) {
-        this.completedLessons = completedLessons;
+        this.setCompletedLessons(completedLessons);
         return this;
     }
 
@@ -66,35 +81,32 @@ public class Enrollment implements Serializable {
         return this;
     }
 
-    public void setCompletedLessons(Set<CompletedLesson> completedLessons) {
-        this.completedLessons = completedLessons;
-    }
-
     public Course getCourse() {
-        return course;
-    }
-
-    public Enrollment course(Course course) {
-        this.course = course;
-        return this;
+        return this.course;
     }
 
     public void setCourse(Course course) {
         this.course = course;
     }
 
-    public Student getStudent() {
-        return student;
-    }
-
-    public Enrollment student(Student student) {
-        this.student = student;
+    public Enrollment course(Course course) {
+        this.setCourse(course);
         return this;
     }
 
-    public void setStudent(Student student) {
-        this.student = student;
+    public User getStudent() {
+        return this.student;
     }
+
+    public void setStudent(User user) {
+        this.student = user;
+    }
+
+    public Enrollment student(User user) {
+        this.setStudent(user);
+        return this;
+    }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -110,7 +122,8 @@ public class Enrollment implements Serializable {
 
     @Override
     public int hashCode() {
-        return 31;
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        return getClass().hashCode();
     }
 
     // prettier-ignore

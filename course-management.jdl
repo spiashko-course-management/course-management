@@ -1,55 +1,47 @@
 application {
   config {
-    applicationType         monolith
-    baseName                course_management
-    packageName             com.spiashko.cm
-    serverPort	            8080
-    authenticationType      oauth2
-    cacheProvider           no
-    websocket               false
-    databaseType            sql
-    devDatabaseType         postgresql
-    prodDatabaseType        postgresql
-    searchEngine            false
-    messageBroker           false
-    serviceDiscoveryType    false
-    buildTool               maven
-    enableSwaggerCodegen    false
-    skipClient	            true
-    testFrameworks          []
-    jhiPrefix               cm
-    entitySuffix            false
-    dtoSuffix               DTO
-    enableTranslation       false
+    applicationType        monolith
+    authenticationType     oauth2
+    baseName               course_management
+//  blueprints
+    buildTool              maven
+    cacheProvider          no
+    clientFramework        react
+    clientPackageManager   npm
+    clientTheme            none
+//  clientThemeVariant
+    databaseType           sql
+    devDatabaseType        postgresql
+    dtoSuffix              DTO
+    enableHibernateCache   false
+    enableSwaggerCodegen   false
+    enableTranslation      false
+//  entitySuffix
+    jhiPrefix              cm
+    languages              [en]
+    messageBroker          false
+    nativeLanguage         en
+    packageName            com.spiashko.cm
+    prodDatabaseType       postgresql
+    reactive               false
+    searchEngine           false
+    serverPort             8080
+    serviceDiscoveryType   false
+    skipClient             false
+    skipServer             false
+    skipUserManagement     false
+    testFrameworks         []
+    websocket              false
   }
   entities *
 }
 
-entity Logo {
-  data ImageBlob required
-}
-
-entity UserLogo {
-}
-
-entity CourseLogo {
-}
-
-entity ExtendedUser {
-}
-
-entity Artifact {
-  data AnyBlob required
-  originalName String required maxlength(50)
-}
-
 entity Course {
   title String required minlength(3) maxlength(50)
-  price BigDecimal required min(0)
 }
 
 entity CourseDetails {
-  summary TextBlob required //basically md file
+  summary TextBlob required /**basically md file**/
 }
 
 entity Module {
@@ -63,7 +55,7 @@ entity Lesson {
 }
 
 entity LessonDetails {
-  content TextBlob required
+  content TextBlob required /**basically md file with link to video if needed**/
 }
 
 entity CompletedLesson {
@@ -72,22 +64,8 @@ entity CompletedLesson {
 entity Enrollment {
 }
 
-entity Payment {
-  sessionId String required
-  amount BigDecimal required
-  status PaymentStatus required
-}
-
-entity Student {
-}
-
-entity Teacher {
-}
-
-enum PaymentStatus {
-  PENDING,
-  SUCCESS,
-  FAIL
+entity UserDetails {
+  bio TextBlob /**basically md file**/
 }
 
 enum LessonType {
@@ -96,34 +74,26 @@ enum LessonType {
 }
 
 relationship OneToOne {
-  ExtendedUser{user required} to User with jpaDerivedIdentifier
-  Student{extendedUser required} to ExtendedUser with jpaDerivedIdentifier
-  Teacher{extendedUser required} to ExtendedUser with jpaDerivedIdentifier
-  CourseLogo{logo required} to Logo with jpaDerivedIdentifier
-  UserLogo{logo required} to Logo with jpaDerivedIdentifier
-  CourseDetails{course required} to Course{courseDetails required} with jpaDerivedIdentifier
-  LessonDetails{lesson required} to Lesson{LessonDetails required} with jpaDerivedIdentifier
-  Course to CourseLogo
-  ExtendedUser to UserLogo
+  UserDetails{user required} to User with jpaDerivedIdentifier
+  CourseDetails{course required} to Course with jpaDerivedIdentifier
+  LessonDetails{lesson required} to Lesson with jpaDerivedIdentifier
 }
 
 relationship OneToMany {
-  Course{enrollments required} to Enrollment{course required}
-  Course{modules required} to Module{course required}
-  Course{artifacts} to Artifact
-  Course{payments} to Payment
+  Course{modules} to Module{course required}
+  Module{lessons} to Lesson{module required}
 
-  Enrollment{CompletedLessons} to CompletedLesson{enrollment required}
-
-  Module{lessons required} to Lesson{module required}
-
-  Lesson{artifacts} to Artifact
-
-  Teacher{courses required} to Course{teacher required}
-
-  Student{enrollments required} to Enrollment{student required}
-  Student{payments required} to Payment{student required}
-
+  Enrollment{completedLessons} to CompletedLesson{enrollment required}
 }
 
+relationship ManyToOne {
+  Enrollment{course required} to Course
+  Enrollment{student required} to User
+
+  Course{teacher required} to User
+
+  CompletedLesson{lesson required} to Lesson
+}
+
+paginate Course with pagination
 

@@ -1,16 +1,10 @@
 package com.spiashko.cm.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
+import com.spiashko.cm.domain.enumeration.LessonType;
+import java.io.Serializable;
 import javax.persistence.*;
 import javax.validation.constraints.*;
-
-import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
-
-import com.spiashko.cm.domain.enumeration.LessonType;
 
 /**
  * A Lesson.
@@ -24,6 +18,7 @@ public class Lesson implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
     @SequenceGenerator(name = "sequenceGenerator")
+    @Column(name = "id")
     private Long id;
 
     @NotNull
@@ -39,21 +34,20 @@ public class Lesson implements Serializable {
     @Column(name = "type", nullable = false)
     private LessonType type;
 
-    @OneToMany(mappedBy = "lesson")
-    private Set<Artifact> artifacts = new HashSet<>();
-
-    @OneToOne(mappedBy = "lesson")
-    @JsonIgnore
-    private LessonDetails lessonDetails;
-
     @ManyToOne(optional = false)
     @NotNull
-    @JsonIgnoreProperties(value = "lessons", allowSetters = true)
+    @JsonIgnoreProperties(value = { "lessons", "course" }, allowSetters = true)
     private Module module;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
+
     public Long getId() {
-        return id;
+        return this.id;
+    }
+
+    public Lesson id(Long id) {
+        this.setId(id);
+        return this;
     }
 
     public void setId(Long id) {
@@ -61,11 +55,11 @@ public class Lesson implements Serializable {
     }
 
     public Integer getOrder() {
-        return order;
+        return this.order;
     }
 
     public Lesson order(Integer order) {
-        this.order = order;
+        this.setOrder(order);
         return this;
     }
 
@@ -74,11 +68,11 @@ public class Lesson implements Serializable {
     }
 
     public String getTitle() {
-        return title;
+        return this.title;
     }
 
     public Lesson title(String title) {
-        this.title = title;
+        this.setTitle(title);
         return this;
     }
 
@@ -87,11 +81,11 @@ public class Lesson implements Serializable {
     }
 
     public LessonType getType() {
-        return type;
+        return this.type;
     }
 
     public Lesson type(LessonType type) {
-        this.type = type;
+        this.setType(type);
         return this;
     }
 
@@ -99,56 +93,19 @@ public class Lesson implements Serializable {
         this.type = type;
     }
 
-    public Set<Artifact> getArtifacts() {
-        return artifacts;
-    }
-
-    public Lesson artifacts(Set<Artifact> artifacts) {
-        this.artifacts = artifacts;
-        return this;
-    }
-
-    public Lesson addArtifacts(Artifact artifact) {
-        this.artifacts.add(artifact);
-        artifact.setLesson(this);
-        return this;
-    }
-
-    public Lesson removeArtifacts(Artifact artifact) {
-        this.artifacts.remove(artifact);
-        artifact.setLesson(null);
-        return this;
-    }
-
-    public void setArtifacts(Set<Artifact> artifacts) {
-        this.artifacts = artifacts;
-    }
-
-    public LessonDetails getLessonDetails() {
-        return lessonDetails;
-    }
-
-    public Lesson lessonDetails(LessonDetails lessonDetails) {
-        this.lessonDetails = lessonDetails;
-        return this;
-    }
-
-    public void setLessonDetails(LessonDetails lessonDetails) {
-        this.lessonDetails = lessonDetails;
-    }
-
     public Module getModule() {
-        return module;
-    }
-
-    public Lesson module(Module module) {
-        this.module = module;
-        return this;
+        return this.module;
     }
 
     public void setModule(Module module) {
         this.module = module;
     }
+
+    public Lesson module(Module module) {
+        this.setModule(module);
+        return this;
+    }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -164,7 +121,8 @@ public class Lesson implements Serializable {
 
     @Override
     public int hashCode() {
-        return 31;
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        return getClass().hashCode();
     }
 
     // prettier-ignore

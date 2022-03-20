@@ -1,11 +1,11 @@
 package com.spiashko.cm.domain;
 
-import org.hibernate.annotations.Type;
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.swagger.v3.oas.annotations.media.Schema;
+import java.io.Serializable;
 import javax.persistence.*;
 import javax.validation.constraints.*;
-
-import java.io.Serializable;
+import org.hibernate.annotations.Type;
 
 /**
  * A CourseDetails.
@@ -17,24 +17,34 @@ public class CourseDetails implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
+    @Column(name = "id")
     private Long id;
 
-    
+    /**
+     * basically md file
+     */
+    @Schema(description = "basically md file", required = true)
     @Lob
     @Type(type = "org.hibernate.type.TextType")
     @Column(name = "summary", nullable = false)
     private String summary;
 
+    @JsonIgnoreProperties(value = { "modules", "teacher" }, allowSetters = true)
     @OneToOne(optional = false)
     @NotNull
-
     @MapsId
     @JoinColumn(name = "id")
     private Course course;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
+
     public Long getId() {
-        return id;
+        return this.id;
+    }
+
+    public CourseDetails id(Long id) {
+        this.setId(id);
+        return this;
     }
 
     public void setId(Long id) {
@@ -42,11 +52,11 @@ public class CourseDetails implements Serializable {
     }
 
     public String getSummary() {
-        return summary;
+        return this.summary;
     }
 
     public CourseDetails summary(String summary) {
-        this.summary = summary;
+        this.setSummary(summary);
         return this;
     }
 
@@ -55,17 +65,18 @@ public class CourseDetails implements Serializable {
     }
 
     public Course getCourse() {
-        return course;
-    }
-
-    public CourseDetails course(Course course) {
-        this.course = course;
-        return this;
+        return this.course;
     }
 
     public void setCourse(Course course) {
         this.course = course;
     }
+
+    public CourseDetails course(Course course) {
+        this.setCourse(course);
+        return this;
+    }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -81,7 +92,8 @@ public class CourseDetails implements Serializable {
 
     @Override
     public int hashCode() {
-        return 31;
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        return getClass().hashCode();
     }
 
     // prettier-ignore

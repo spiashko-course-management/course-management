@@ -1,25 +1,30 @@
 {
-  "name": "CompletedLesson",
+  "applications": ["course_management"],
+  "changelogDate": "20220320202914",
+  "dto": "no",
+  "embedded": false,
+  "entityTableName": "completed_lesson",
   "fields": [],
+  "fluentMethods": true,
+  "jpaMetamodelFiltering": false,
+  "name": "CompletedLesson",
+  "pagination": "no",
+  "readOnly": false,
   "relationships": [
     {
+      "otherEntityName": "lesson",
+      "otherEntityRelationshipName": "completedLesson",
+      "relationshipName": "lesson",
       "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    },
+    {
       "otherEntityName": "enrollment",
       "otherEntityRelationshipName": "completedLessons",
-      "relationshipValidateRules": "required",
       "relationshipName": "enrollment",
-      "otherEntityField": "id"
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
     }
   ],
-  "changelogDate": "20201030101849",
-  "entityTableName": "completed_lesson",
-  "dto": "no",
-  "pagination": "no",
-  "service": "no",
-  "jpaMetamodelFiltering": false,
-  "fluentMethods": true,
-  "readOnly": false,
-  "embedded": false,
-  "clientRootFolder": "",
-  "applications": ["course_management"]
+  "service": "no"
 }

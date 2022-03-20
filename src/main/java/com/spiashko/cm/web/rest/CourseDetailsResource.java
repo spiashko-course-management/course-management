@@ -4,22 +4,21 @@ import com.spiashko.cm.domain.CourseDetails;
 import com.spiashko.cm.repository.CourseDetailsRepository;
 import com.spiashko.cm.repository.CourseRepository;
 import com.spiashko.cm.web.rest.errors.BadRequestAlertException;
-
-import io.github.jhipster.web.util.HeaderUtil;
-import io.github.jhipster.web.util.ResponseUtil;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import tech.jhipster.web.util.HeaderUtil;
+import tech.jhipster.web.util.ResponseUtil;
 
 /**
  * REST controller for managing {@link com.spiashko.cm.domain.CourseDetails}.
@@ -64,30 +63,89 @@ public class CourseDetailsResource {
         Long courseId = courseDetails.getCourse().getId();
         courseRepository.findById(courseId).ifPresent(courseDetails::course);
         CourseDetails result = courseDetailsRepository.save(courseDetails);
-        return ResponseEntity.created(new URI("/api/course-details/" + result.getId()))
+        return ResponseEntity
+            .created(new URI("/api/course-details/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
 
     /**
-     * {@code PUT  /course-details} : Updates an existing courseDetails.
+     * {@code PUT  /course-details/:id} : Updates an existing courseDetails.
      *
+     * @param id the id of the courseDetails to save.
      * @param courseDetails the courseDetails to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated courseDetails,
      * or with status {@code 400 (Bad Request)} if the courseDetails is not valid,
      * or with status {@code 500 (Internal Server Error)} if the courseDetails couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping("/course-details")
-    public ResponseEntity<CourseDetails> updateCourseDetails(@Valid @RequestBody CourseDetails courseDetails) throws URISyntaxException {
-        log.debug("REST request to update CourseDetails : {}", courseDetails);
+    @PutMapping("/course-details/{id}")
+    public ResponseEntity<CourseDetails> updateCourseDetails(
+        @PathVariable(value = "id", required = false) final Long id,
+        @Valid @RequestBody CourseDetails courseDetails
+    ) throws URISyntaxException {
+        log.debug("REST request to update CourseDetails : {}, {}", id, courseDetails);
         if (courseDetails.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+        if (!Objects.equals(id, courseDetails.getId())) {
+            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+        }
+
+        if (!courseDetailsRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+
         CourseDetails result = courseDetailsRepository.save(courseDetails);
-        return ResponseEntity.ok()
+        return ResponseEntity
+            .ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, courseDetails.getId().toString()))
             .body(result);
+    }
+
+    /**
+     * {@code PATCH  /course-details/:id} : Partial updates given fields of an existing courseDetails, field will ignore if it is null
+     *
+     * @param id the id of the courseDetails to save.
+     * @param courseDetails the courseDetails to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated courseDetails,
+     * or with status {@code 400 (Bad Request)} if the courseDetails is not valid,
+     * or with status {@code 404 (Not Found)} if the courseDetails is not found,
+     * or with status {@code 500 (Internal Server Error)} if the courseDetails couldn't be updated.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PatchMapping(value = "/course-details/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    public ResponseEntity<CourseDetails> partialUpdateCourseDetails(
+        @PathVariable(value = "id", required = false) final Long id,
+        @NotNull @RequestBody CourseDetails courseDetails
+    ) throws URISyntaxException {
+        log.debug("REST request to partial update CourseDetails partially : {}, {}", id, courseDetails);
+        if (courseDetails.getId() == null) {
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        if (!Objects.equals(id, courseDetails.getId())) {
+            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+        }
+
+        if (!courseDetailsRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+
+        Optional<CourseDetails> result = courseDetailsRepository
+            .findById(courseDetails.getId())
+            .map(existingCourseDetails -> {
+                if (courseDetails.getSummary() != null) {
+                    existingCourseDetails.setSummary(courseDetails.getSummary());
+                }
+
+                return existingCourseDetails;
+            })
+            .map(courseDetailsRepository::save);
+
+        return ResponseUtil.wrapOrNotFound(
+            result,
+            HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, courseDetails.getId().toString())
+        );
     }
 
     /**
@@ -126,6 +184,9 @@ public class CourseDetailsResource {
     public ResponseEntity<Void> deleteCourseDetails(@PathVariable Long id) {
         log.debug("REST request to delete CourseDetails : {}", id);
         courseDetailsRepository.deleteById(id);
-        return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString())).build();
+        return ResponseEntity
+            .noContent()
+            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString()))
+            .build();
     }
 }

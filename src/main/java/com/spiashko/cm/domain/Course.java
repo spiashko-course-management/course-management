@@ -1,15 +1,11 @@
 package com.spiashko.cm.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-import javax.persistence.*;
-import javax.validation.constraints.*;
-
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
+import javax.persistence.*;
+import javax.validation.constraints.*;
 
 /**
  * A Course.
@@ -23,6 +19,7 @@ public class Course implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
     @SequenceGenerator(name = "sequenceGenerator")
+    @Column(name = "id")
     private Long id;
 
     @NotNull
@@ -30,39 +27,23 @@ public class Course implements Serializable {
     @Column(name = "title", length = 50, nullable = false)
     private String title;
 
-    @NotNull
-    @DecimalMin(value = "0")
-    @Column(name = "price", precision = 21, scale = 2, nullable = false)
-    private BigDecimal price;
-
-    @OneToOne
-    @JoinColumn(unique = true)
-    private CourseLogo courseLogo;
-
     @OneToMany(mappedBy = "course")
-    private Set<Enrollment> enrollments = new HashSet<>();
-
-    @OneToMany(mappedBy = "course")
+    @JsonIgnoreProperties(value = { "lessons", "course" }, allowSetters = true)
     private Set<Module> modules = new HashSet<>();
-
-    @OneToMany(mappedBy = "course")
-    private Set<Artifact> artifacts = new HashSet<>();
-
-    @OneToMany(mappedBy = "course")
-    private Set<Payment> payments = new HashSet<>();
-
-    @OneToOne(mappedBy = "course")
-    @JsonIgnore
-    private CourseDetails courseDetails;
 
     @ManyToOne(optional = false)
     @NotNull
-    @JsonIgnoreProperties(value = "courses", allowSetters = true)
-    private Teacher teacher;
+    private User teacher;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
+
     public Long getId() {
-        return id;
+        return this.id;
+    }
+
+    public Course id(Long id) {
+        this.setId(id);
+        return this;
     }
 
     public void setId(Long id) {
@@ -70,11 +51,11 @@ public class Course implements Serializable {
     }
 
     public String getTitle() {
-        return title;
+        return this.title;
     }
 
     public Course title(String title) {
-        this.title = title;
+        this.setTitle(title);
         return this;
     }
 
@@ -82,63 +63,22 @@ public class Course implements Serializable {
         this.title = title;
     }
 
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public Course price(BigDecimal price) {
-        this.price = price;
-        return this;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
-    public CourseLogo getCourseLogo() {
-        return courseLogo;
-    }
-
-    public Course courseLogo(CourseLogo courseLogo) {
-        this.courseLogo = courseLogo;
-        return this;
-    }
-
-    public void setCourseLogo(CourseLogo courseLogo) {
-        this.courseLogo = courseLogo;
-    }
-
-    public Set<Enrollment> getEnrollments() {
-        return enrollments;
-    }
-
-    public Course enrollments(Set<Enrollment> enrollments) {
-        this.enrollments = enrollments;
-        return this;
-    }
-
-    public Course addEnrollments(Enrollment enrollment) {
-        this.enrollments.add(enrollment);
-        enrollment.setCourse(this);
-        return this;
-    }
-
-    public Course removeEnrollments(Enrollment enrollment) {
-        this.enrollments.remove(enrollment);
-        enrollment.setCourse(null);
-        return this;
-    }
-
-    public void setEnrollments(Set<Enrollment> enrollments) {
-        this.enrollments = enrollments;
-    }
-
     public Set<Module> getModules() {
-        return modules;
+        return this.modules;
+    }
+
+    public void setModules(Set<Module> modules) {
+        if (this.modules != null) {
+            this.modules.forEach(i -> i.setCourse(null));
+        }
+        if (modules != null) {
+            modules.forEach(i -> i.setCourse(this));
+        }
+        this.modules = modules;
     }
 
     public Course modules(Set<Module> modules) {
-        this.modules = modules;
+        this.setModules(modules);
         return this;
     }
 
@@ -154,85 +94,19 @@ public class Course implements Serializable {
         return this;
     }
 
-    public void setModules(Set<Module> modules) {
-        this.modules = modules;
+    public User getTeacher() {
+        return this.teacher;
     }
 
-    public Set<Artifact> getArtifacts() {
-        return artifacts;
+    public void setTeacher(User user) {
+        this.teacher = user;
     }
 
-    public Course artifacts(Set<Artifact> artifacts) {
-        this.artifacts = artifacts;
+    public Course teacher(User user) {
+        this.setTeacher(user);
         return this;
     }
 
-    public Course addArtifacts(Artifact artifact) {
-        this.artifacts.add(artifact);
-        artifact.setCourse(this);
-        return this;
-    }
-
-    public Course removeArtifacts(Artifact artifact) {
-        this.artifacts.remove(artifact);
-        artifact.setCourse(null);
-        return this;
-    }
-
-    public void setArtifacts(Set<Artifact> artifacts) {
-        this.artifacts = artifacts;
-    }
-
-    public Set<Payment> getPayments() {
-        return payments;
-    }
-
-    public Course payments(Set<Payment> payments) {
-        this.payments = payments;
-        return this;
-    }
-
-    public Course addPayments(Payment payment) {
-        this.payments.add(payment);
-        payment.setCourse(this);
-        return this;
-    }
-
-    public Course removePayments(Payment payment) {
-        this.payments.remove(payment);
-        payment.setCourse(null);
-        return this;
-    }
-
-    public void setPayments(Set<Payment> payments) {
-        this.payments = payments;
-    }
-
-    public CourseDetails getCourseDetails() {
-        return courseDetails;
-    }
-
-    public Course courseDetails(CourseDetails courseDetails) {
-        this.courseDetails = courseDetails;
-        return this;
-    }
-
-    public void setCourseDetails(CourseDetails courseDetails) {
-        this.courseDetails = courseDetails;
-    }
-
-    public Teacher getTeacher() {
-        return teacher;
-    }
-
-    public Course teacher(Teacher teacher) {
-        this.teacher = teacher;
-        return this;
-    }
-
-    public void setTeacher(Teacher teacher) {
-        this.teacher = teacher;
-    }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -248,7 +122,8 @@ public class Course implements Serializable {
 
     @Override
     public int hashCode() {
-        return 31;
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        return getClass().hashCode();
     }
 
     // prettier-ignore
@@ -257,7 +132,6 @@ public class Course implements Serializable {
         return "Course{" +
             "id=" + getId() +
             ", title='" + getTitle() + "'" +
-            ", price=" + getPrice() +
             "}";
     }
 }
