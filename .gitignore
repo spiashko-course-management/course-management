@@ -157,3 +157,8 @@ Desktop.ini
 ######################
 /coverage/
 /.nyc_output/
+
+######################
+# Postgresql data
+######################
+/src/main/docker/postgresql/data/

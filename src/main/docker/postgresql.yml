@@ -3,11 +3,11 @@ version: '3.8'
 services:
   course_management-postgresql:
     image: postgres:14.2
-    # volumes:
-    #   - ~/volumes/jhipster/course_management/postgresql/:/var/lib/postgresql/data/
+    volumes:
+      - ./postgresql/data:/var/lib/postgresql/data/
+      - ./postgresql/init/:/docker-entrypoint-initdb.d/
     environment:
-      - POSTGRES_USER=course_management
-      - POSTGRES_PASSWORD=
+      - POSTGRES_PASSWORD=postgres
       - POSTGRES_HOST_AUTH_METHOD=trust
     # If you want to expose these ports outside your dev PC,
     # remove the "127.0.0.1:" prefix
