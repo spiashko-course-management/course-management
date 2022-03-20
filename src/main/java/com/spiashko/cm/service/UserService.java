@@ -5,12 +5,8 @@ import com.spiashko.cm.domain.Authority;
 import com.spiashko.cm.domain.User;
 import com.spiashko.cm.repository.AuthorityRepository;
 import com.spiashko.cm.repository.UserRepository;
-import com.spiashko.cm.security.SecurityUtils;
 import com.spiashko.cm.service.dto.AdminUserDTO;
 import com.spiashko.cm.service.dto.UserDTO;
-import java.time.Instant;
-import java.util.*;
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -21,6 +17,13 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Instant;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Service class for managing users.
@@ -40,31 +43,6 @@ public class UserService {
         this.authorityRepository = authorityRepository;
     }
 
-    /**
-     * Update basic information (first name, last name, email, language) for the current user.
-     *
-     * @param firstName first name of user.
-     * @param lastName  last name of user.
-     * @param email     email id of user.
-     * @param langKey   language key.
-     * @param imageUrl  image URL of user.
-     */
-    public void updateUser(String firstName, String lastName, String email, String langKey, String imageUrl) {
-        SecurityUtils
-            .getCurrentUserLogin()
-            .flatMap(userRepository::findOneByLogin)
-            .ifPresent(user -> {
-                user.setFirstName(firstName);
-                user.setLastName(lastName);
-                if (email != null) {
-                    user.setEmail(email.toLowerCase());
-                }
-                user.setLangKey(langKey);
-                user.setImageUrl(imageUrl);
-                log.debug("Changed Information for User: {}", user);
-            });
-    }
-
     @Transactional(readOnly = true)
     public Page<AdminUserDTO> getAllManagedUsers(Pageable pageable) {
         return userRepository.findAll(pageable).map(AdminUserDTO::new);
@@ -82,46 +60,12 @@ public class UserService {
 
     /**
      * Gets a list of all the authorities.
+     *
      * @return a list of all the authorities.
      */
     @Transactional(readOnly = true)
     public List<String> getAuthorities() {
         return authorityRepository.findAll().stream().map(Authority::getName).collect(Collectors.toList());
-    }
-
-    private User syncUserWithIdP(Map<String, Object> details, User user) {
-        // save authorities in to sync user roles/groups between IdP and JHipster's local database
-        Collection<String> dbAuthorities = getAuthorities();
-        Collection<String> userAuthorities = user.getAuthorities().stream().map(Authority::getName).collect(Collectors.toList());
-        for (String authority : userAuthorities) {
-            if (!dbAuthorities.contains(authority)) {
-                log.debug("Saving authority '{}' in local database", authority);
-                Authority authorityToSave = new Authority();
-                authorityToSave.setName(authority);
-                authorityRepository.save(authorityToSave);
-            }
-        }
-        // save account in to sync users between IdP and JHipster's local database
-        Optional<User> existingUser = userRepository.findOneByLogin(user.getLogin());
-        if (existingUser.isPresent()) {
-            // if IdP sends last updated information, use it to determine if an update should happen
-            if (details.get("updated_at") != null) {
-                Instant dbModifiedDate = existingUser.get().getLastModifiedDate();
-                Instant idpModifiedDate = (Instant) details.get("updated_at");
-                if (idpModifiedDate.isAfter(dbModifiedDate)) {
-                    log.debug("Updating user '{}' in local database", user.getLogin());
-                    updateUser(user.getFirstName(), user.getLastName(), user.getEmail(), user.getLangKey(), user.getImageUrl());
-                }
-                // no last updated info, blindly update
-            } else {
-                log.debug("Updating user '{}' in local database", user.getLogin());
-                updateUser(user.getFirstName(), user.getLastName(), user.getEmail(), user.getLangKey(), user.getImageUrl());
-            }
-        } else {
-            log.debug("Saving user '{}' in local database", user.getLogin());
-            userRepository.save(user);
-        }
-        return user;
     }
 
     /**
@@ -156,6 +100,41 @@ public class UserService {
         );
 
         return new AdminUserDTO(syncUserWithIdP(attributes, user));
+    }
+
+    private User syncUserWithIdP(Map<String, Object> details, User user) {
+        // save authorities in to sync user roles/groups between IdP and JHipster's local database
+        Collection<String> dbAuthorities = getAuthorities();
+        Collection<String> userAuthorities = user.getAuthorities().stream().map(Authority::getName).collect(Collectors.toList());
+        for (String authority : userAuthorities) {
+            if (!dbAuthorities.contains(authority)) {
+                log.debug("Saving authority '{}' in local database", authority);
+                Authority authorityToSave = new Authority();
+                authorityToSave.setName(authority);
+                authorityRepository.save(authorityToSave);
+            }
+        }
+        // save account in to sync users between IdP and JHipster's local database
+        Optional<User> existingUser = userRepository.findOneWithAuthoritiesByLogin(user.getLogin());
+        if (existingUser.isPresent()) {
+            // if IdP sends last updated information, use it to determine if an update should happen
+            if (details.get("updated_at") != null) {
+                Instant dbModifiedDate = existingUser.get().getLastModifiedDate();
+                Instant idpModifiedDate = (Instant) details.get("updated_at");
+                if (idpModifiedDate.isAfter(dbModifiedDate)) {
+                    log.debug("Updating user '{}' in local database", user.getLogin());
+                    mapToUserInDb(existingUser.get(), user);
+                }
+                // no last updated info, blindly update
+            } else {
+                log.debug("Updating user '{}' in local database", user.getLogin());
+                mapToUserInDb(existingUser.get(), user);
+            }
+        } else {
+            log.debug("Saving user '{}' in local database", user.getLogin());
+            userRepository.save(user);
+        }
+        return user;
     }
 
     private static User getUser(Map<String, Object> details) {
@@ -217,5 +196,17 @@ public class UserService {
         }
         user.setActivated(activated);
         return user;
+    }
+
+    private void mapToUserInDb(User dbUser, User user) {
+        dbUser.setFirstName(user.getFirstName());
+        dbUser.setLastName(user.getLastName());
+        if (user.getEmail() != null) {
+            dbUser.setEmail(user.getEmail().toLowerCase());
+        }
+        dbUser.setLangKey(user.getLangKey());
+        dbUser.setImageUrl(user.getImageUrl());
+        dbUser.getAuthorities().addAll(user.getAuthorities());
+        log.debug("Changed Information for User: {}", dbUser);
     }
 }
