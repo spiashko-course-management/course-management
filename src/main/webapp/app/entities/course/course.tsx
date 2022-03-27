@@ -1,19 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, Table } from 'reactstrap';
-import { Translate, getSortState, JhiPagination, JhiItemCount } from 'react-jhipster';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, {useEffect, useState} from 'react';
+import {Link, RouteComponentProps} from 'react-router-dom';
+import {Button, Col, Form, FormGroup, Input, InputGroup, Row, Table} from 'reactstrap';
+import {getSortState, JhiItemCount, JhiPagination} from 'react-jhipster';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
-import { getEntities } from './course.reducer';
-import { ICourse } from 'app/shared/model/course.model';
-import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
-import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
-import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
-import { useAppDispatch, useAppSelector } from 'app/config/store';
+import {getEntities} from './course.reducer';
+import {ASC, DESC, ITEMS_PER_PAGE, SORT} from 'app/shared/util/pagination.constants';
+import {getFilterStateFromQueryParams, overridePaginationStateWithQueryParams} from 'app/shared/util/entity-utils';
+import {useAppDispatch, useAppSelector} from 'app/config/store';
 
 export const Course = (props: RouteComponentProps<{ url: string }>) => {
   const dispatch = useAppDispatch();
 
+  const [filterState, setFilterState] = useState(
+    getFilterStateFromQueryParams(props.location.search)
+  );
+  const [filterFloatingState, setFilterFloatingState] = useState(
+    getFilterStateFromQueryParams(props.location.search)
+  );
   const [paginationState, setPaginationState] = useState(
     overridePaginationStateWithQueryParams(getSortState(props.location, ITEMS_PER_PAGE, 'id'), props.location.search)
   );
@@ -25,6 +29,7 @@ export const Course = (props: RouteComponentProps<{ url: string }>) => {
   const getAllEntities = () => {
     dispatch(
       getEntities({
+        filter: filterState,
         page: paginationState.activePage - 1,
         size: paginationState.itemsPerPage,
         sort: `${paginationState.sort},${paginationState.order}`,
@@ -32,9 +37,27 @@ export const Course = (props: RouteComponentProps<{ url: string }>) => {
     );
   };
 
+  const startSearching = e => {
+    setFilterState(filterFloatingState);
+    setPaginationState({
+      ...paginationState,
+      activePage: 1,
+    });
+    e.preventDefault();
+  };
+
+  const clear = () => {
+    setFilterState('');
+    setFilterFloatingState('');
+    setPaginationState({
+      ...paginationState,
+      activePage: 1,
+    });
+  };
+
   const sortEntities = () => {
     getAllEntities();
-    const endURL = `?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`;
+    const endURL = `?filter=${filterState}&page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`;
     if (props.location.search !== endURL) {
       props.history.push(`${props.location.pathname}${endURL}`);
     }
@@ -42,12 +65,17 @@ export const Course = (props: RouteComponentProps<{ url: string }>) => {
 
   useEffect(() => {
     sortEntities();
+  }, [paginationState.activePage, paginationState.order, paginationState.sort, filterState]);
+
+  useEffect(() => {
+    setFilterFloatingState(filterState);
   }, [paginationState.activePage, paginationState.order, paginationState.sort]);
 
   useEffect(() => {
     const params = new URLSearchParams(props.location.search);
     const page = params.get('page');
     const sort = params.get(SORT);
+    const filter = params.get('filter');
     if (page && sort) {
       const sortSplit = sort.split(',');
       setPaginationState({
@@ -56,6 +84,9 @@ export const Course = (props: RouteComponentProps<{ url: string }>) => {
         sort: sortSplit[0],
         order: sortSplit[1],
       });
+    }
+    if (filter) {
+      setFilterState(filter);
     }
   }, [props.location.search]);
 
@@ -93,6 +124,29 @@ export const Course = (props: RouteComponentProps<{ url: string }>) => {
           </Link>
         </div>
       </h2>
+      <Row>
+        <Col sm="12">
+          <Form onSubmit={startSearching}>
+            <FormGroup>
+              <InputGroup>
+                <Input
+                  type="text"
+                  name="search"
+                  value={filterFloatingState}
+                  onChange={e => setFilterFloatingState(e.target.value)}
+                  placeholder="Search for Course"
+                />
+                <Button className="input-group-addon">
+                  <FontAwesomeIcon icon="search"/>
+                </Button>
+                <Button type="reset" className="input-group-addon" onClick={clear}>
+                  <FontAwesomeIcon icon="trash"/>
+                </Button>
+              </InputGroup>
+            </FormGroup>
+          </Form>
+        </Col>
+      </Row>
       <div className="table-responsive">
         {courseList && courseList.length > 0 ? (
           <Table responsive>
