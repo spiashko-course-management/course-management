@@ -9,8 +9,8 @@ export const EntitiesMenu = props => (
     <MenuItem icon="asterisk" to="/course">
       Course
     </MenuItem>
-    <MenuItem icon="asterisk" to="/course-details">
-      Course Details
+    <MenuItem icon="asterisk" to="/course-extra-info">
+      Course Extra Info
     </MenuItem>
     <MenuItem icon="asterisk" to="/module">
       Module
@@ -18,8 +18,8 @@ export const EntitiesMenu = props => (
     <MenuItem icon="asterisk" to="/lesson">
       Lesson
     </MenuItem>
-    <MenuItem icon="asterisk" to="/lesson-details">
-      Lesson Details
+    <MenuItem icon="asterisk" to="/lesson-extra-info">
+      Lesson Extra Info
     </MenuItem>
     <MenuItem icon="asterisk" to="/completed-lesson">
       Completed Lesson
@@ -27,8 +27,8 @@ export const EntitiesMenu = props => (
     <MenuItem icon="asterisk" to="/enrollment">
       Enrollment
     </MenuItem>
-    <MenuItem icon="asterisk" to="/user-details">
-      User Details
+    <MenuItem icon="asterisk" to="/user-extra-info">
+      User Extra Info
     </MenuItem>
     {/* jhipster-needle-add-entity-to-menu - JHipster will add entities to the menu here */}
   </NavDropdown>

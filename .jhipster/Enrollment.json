@@ -1,6 +1,6 @@
 {
   "applications": ["course_management"],
-  "changelogDate": "20220320203014",
+  "changelogDate": "20220328215413",
   "dto": "no",
   "embedded": false,
   "entityTableName": "enrollment",

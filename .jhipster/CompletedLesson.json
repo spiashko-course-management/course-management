@@ -1,6 +1,6 @@
 {
   "applications": ["course_management"],
-  "changelogDate": "20220320202914",
+  "changelogDate": "20220328215313",
   "dto": "no",
   "embedded": false,
   "entityTableName": "completed_lesson",

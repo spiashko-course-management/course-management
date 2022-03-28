@@ -1,0 +1,33 @@
+{
+  "applications": ["course_management"],
+  "changelogDate": "20220328215513",
+  "dto": "no",
+  "embedded": false,
+  "entityTableName": "user_extra_info",
+  "fields": [
+    {
+      "fieldName": "bio",
+      "fieldType": "byte[]",
+      "fieldTypeBlobContent": "text",
+      "javadoc": "basically md file"
+    }
+  ],
+  "fluentMethods": true,
+  "jpaMetamodelFiltering": false,
+  "name": "UserExtraInfo",
+  "pagination": "no",
+  "readOnly": false,
+  "relationships": [
+    {
+      "id": true,
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "userExtraInfo",
+      "ownerSide": true,
+      "relationshipName": "user",
+      "relationshipType": "one-to-one",
+      "relationshipValidateRules": "required",
+      "useJPADerivedIdentifier": true
+    }
+  ],
+  "service": "no"
+}
