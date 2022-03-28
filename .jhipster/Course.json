@@ -1,6 +1,6 @@
 {
   "applications": ["course_management"],
-  "changelogDate": "20220320202414",
+  "changelogDate": "20220328214813",
   "dto": "no",
   "embedded": false,
   "entityTableName": "course",
@@ -10,6 +10,13 @@
       "fieldType": "String",
       "fieldValidateRules": ["required", "minlength", "maxlength"],
       "fieldValidateRulesMaxlength": "50",
+      "fieldValidateRulesMinlength": "3"
+    },
+    {
+      "fieldName": "imageUrl",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "minlength", "maxlength"],
+      "fieldValidateRulesMaxlength": "200",
       "fieldValidateRulesMinlength": "3"
     }
   ],

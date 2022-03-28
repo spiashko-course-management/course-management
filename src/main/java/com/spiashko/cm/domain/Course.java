@@ -27,6 +27,11 @@ public class Course implements Serializable {
     @Column(name = "title", length = 50, nullable = false)
     private String title;
 
+    @NotNull
+    @Size(min = 3, max = 200)
+    @Column(name = "image_url", length = 200, nullable = false)
+    private String imageUrl;
+
     @OneToMany(mappedBy = "course")
     @JsonIgnoreProperties(value = { "lessons", "course" }, allowSetters = true)
     private Set<Module> modules = new HashSet<>();
@@ -61,6 +66,19 @@ public class Course implements Serializable {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getImageUrl() {
+        return this.imageUrl;
+    }
+
+    public Course imageUrl(String imageUrl) {
+        this.setImageUrl(imageUrl);
+        return this;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public Set<Module> getModules() {
@@ -132,6 +150,7 @@ public class Course implements Serializable {
         return "Course{" +
             "id=" + getId() +
             ", title='" + getTitle() + "'" +
+            ", imageUrl='" + getImageUrl() + "'" +
             "}";
     }
 }

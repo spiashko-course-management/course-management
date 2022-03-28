@@ -5,13 +5,13 @@ import { Switch } from 'react-router-dom';
 import ErrorBoundaryRoute from 'app/shared/error/error-boundary-route';
 
 import Course from './course';
-import CourseDetails from './course-details';
+import CourseExtraInfo from './course-extra-info';
 import Module from './module';
 import Lesson from './lesson';
-import LessonDetails from './lesson-details';
+import LessonExtraInfo from './lesson-extra-info';
 import CompletedLesson from './completed-lesson';
 import Enrollment from './enrollment';
-import UserDetails from './user-details';
+import UserExtraInfo from './user-extra-info';
 /* jhipster-needle-add-route-import - JHipster will add routes here */
 
 const Routes = ({ match }) => (
@@ -19,13 +19,13 @@ const Routes = ({ match }) => (
     <Switch>
       {/* prettier-ignore */}
       <ErrorBoundaryRoute path={`${match.url}course`} component={Course} />
-      <ErrorBoundaryRoute path={`${match.url}course-details`} component={CourseDetails} />
+      <ErrorBoundaryRoute path={`${match.url}course-extra-info`} component={CourseExtraInfo} />
       <ErrorBoundaryRoute path={`${match.url}module`} component={Module} />
       <ErrorBoundaryRoute path={`${match.url}lesson`} component={Lesson} />
-      <ErrorBoundaryRoute path={`${match.url}lesson-details`} component={LessonDetails} />
+      <ErrorBoundaryRoute path={`${match.url}lesson-extra-info`} component={LessonExtraInfo} />
       <ErrorBoundaryRoute path={`${match.url}completed-lesson`} component={CompletedLesson} />
       <ErrorBoundaryRoute path={`${match.url}enrollment`} component={Enrollment} />
-      <ErrorBoundaryRoute path={`${match.url}user-details`} component={UserDetails} />
+      <ErrorBoundaryRoute path={`${match.url}user-extra-info`} component={UserExtraInfo} />
       {/* jhipster-needle-add-route-path - JHipster will add routes here */}
     </Switch>
   </div>

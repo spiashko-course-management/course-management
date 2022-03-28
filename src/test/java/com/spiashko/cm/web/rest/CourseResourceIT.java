@@ -34,6 +34,9 @@ class CourseResourceIT {
     private static final String DEFAULT_TITLE = "AAAAAAAAAA";
     private static final String UPDATED_TITLE = "BBBBBBBBBB";
 
+    private static final String DEFAULT_IMAGE_URL = "AAAAAAAAAA";
+    private static final String UPDATED_IMAGE_URL = "BBBBBBBBBB";
+
     private static final String ENTITY_API_URL = "/api/courses";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
@@ -58,7 +61,7 @@ class CourseResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Course createEntity(EntityManager em) {
-        Course course = new Course().title(DEFAULT_TITLE);
+        Course course = new Course().title(DEFAULT_TITLE).imageUrl(DEFAULT_IMAGE_URL);
         // Add required entity
         User user = UserResourceIT.createEntity(em);
         em.persist(user);
@@ -74,7 +77,7 @@ class CourseResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Course createUpdatedEntity(EntityManager em) {
-        Course course = new Course().title(UPDATED_TITLE);
+        Course course = new Course().title(UPDATED_TITLE).imageUrl(UPDATED_IMAGE_URL);
         // Add required entity
         User user = UserResourceIT.createEntity(em);
         em.persist(user);
@@ -104,6 +107,7 @@ class CourseResourceIT {
         assertThat(courseList).hasSize(databaseSizeBeforeCreate + 1);
         Course testCourse = courseList.get(courseList.size() - 1);
         assertThat(testCourse.getTitle()).isEqualTo(DEFAULT_TITLE);
+        assertThat(testCourse.getImageUrl()).isEqualTo(DEFAULT_IMAGE_URL);
     }
 
     @Test
@@ -147,6 +151,25 @@ class CourseResourceIT {
 
     @Test
     @Transactional
+    void checkImageUrlIsRequired() throws Exception {
+        int databaseSizeBeforeTest = courseRepository.findAll().size();
+        // set the field null
+        course.setImageUrl(null);
+
+        // Create the Course, which fails.
+
+        restCourseMockMvc
+            .perform(
+                post(ENTITY_API_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(course))
+            )
+            .andExpect(status().isBadRequest());
+
+        List<Course> courseList = courseRepository.findAll();
+        assertThat(courseList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
     void getAllCourses() throws Exception {
         // Initialize the database
         courseRepository.saveAndFlush(course);
@@ -157,7 +180,8 @@ class CourseResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(course.getId().intValue())))
-            .andExpect(jsonPath("$.[*].title").value(hasItem(DEFAULT_TITLE)));
+            .andExpect(jsonPath("$.[*].title").value(hasItem(DEFAULT_TITLE)))
+            .andExpect(jsonPath("$.[*].imageUrl").value(hasItem(DEFAULT_IMAGE_URL)));
     }
 
     @Test
@@ -172,7 +196,8 @@ class CourseResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(course.getId().intValue()))
-            .andExpect(jsonPath("$.title").value(DEFAULT_TITLE));
+            .andExpect(jsonPath("$.title").value(DEFAULT_TITLE))
+            .andExpect(jsonPath("$.imageUrl").value(DEFAULT_IMAGE_URL));
     }
 
     @Test
@@ -194,7 +219,7 @@ class CourseResourceIT {
         Course updatedCourse = courseRepository.findById(course.getId()).get();
         // Disconnect from session so that the updates on updatedCourse are not directly saved in db
         em.detach(updatedCourse);
-        updatedCourse.title(UPDATED_TITLE);
+        updatedCourse.title(UPDATED_TITLE).imageUrl(UPDATED_IMAGE_URL);
 
         restCourseMockMvc
             .perform(
@@ -210,6 +235,7 @@ class CourseResourceIT {
         assertThat(courseList).hasSize(databaseSizeBeforeUpdate);
         Course testCourse = courseList.get(courseList.size() - 1);
         assertThat(testCourse.getTitle()).isEqualTo(UPDATED_TITLE);
+        assertThat(testCourse.getImageUrl()).isEqualTo(UPDATED_IMAGE_URL);
     }
 
     @Test
@@ -298,6 +324,7 @@ class CourseResourceIT {
         assertThat(courseList).hasSize(databaseSizeBeforeUpdate);
         Course testCourse = courseList.get(courseList.size() - 1);
         assertThat(testCourse.getTitle()).isEqualTo(DEFAULT_TITLE);
+        assertThat(testCourse.getImageUrl()).isEqualTo(DEFAULT_IMAGE_URL);
     }
 
     @Test
@@ -312,7 +339,7 @@ class CourseResourceIT {
         Course partialUpdatedCourse = new Course();
         partialUpdatedCourse.setId(course.getId());
 
-        partialUpdatedCourse.title(UPDATED_TITLE);
+        partialUpdatedCourse.title(UPDATED_TITLE).imageUrl(UPDATED_IMAGE_URL);
 
         restCourseMockMvc
             .perform(
@@ -328,6 +355,7 @@ class CourseResourceIT {
         assertThat(courseList).hasSize(databaseSizeBeforeUpdate);
         Course testCourse = courseList.get(courseList.size() - 1);
         assertThat(testCourse.getTitle()).isEqualTo(UPDATED_TITLE);
+        assertThat(testCourse.getImageUrl()).isEqualTo(UPDATED_IMAGE_URL);
     }
 
     @Test

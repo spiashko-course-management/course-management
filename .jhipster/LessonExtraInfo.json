@@ -1,0 +1,34 @@
+{
+  "applications": ["course_management"],
+  "changelogDate": "20220328215213",
+  "dto": "no",
+  "embedded": false,
+  "entityTableName": "lesson_extra_info",
+  "fields": [
+    {
+      "fieldName": "content",
+      "fieldType": "byte[]",
+      "fieldTypeBlobContent": "text",
+      "fieldValidateRules": ["required"],
+      "javadoc": "basically md file with link to video if needed"
+    }
+  ],
+  "fluentMethods": true,
+  "jpaMetamodelFiltering": false,
+  "name": "LessonExtraInfo",
+  "pagination": "no",
+  "readOnly": false,
+  "relationships": [
+    {
+      "id": true,
+      "otherEntityName": "lesson",
+      "otherEntityRelationshipName": "lessonExtraInfo",
+      "ownerSide": true,
+      "relationshipName": "lesson",
+      "relationshipType": "one-to-one",
+      "relationshipValidateRules": "required",
+      "useJPADerivedIdentifier": true
+    }
+  ],
+  "service": "no"
+}

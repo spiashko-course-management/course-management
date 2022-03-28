@@ -38,9 +38,10 @@ application {
 
 entity Course {
   title String required minlength(3) maxlength(50)
+  imageUrl String required minlength(3) maxlength(200)
 }
 
-entity CourseDetails {
+entity CourseExtraInfo {
   summary TextBlob required /**basically md file**/
 }
 
@@ -54,7 +55,7 @@ entity Lesson {
   type LessonType required
 }
 
-entity LessonDetails {
+entity LessonExtraInfo {
   content TextBlob required /**basically md file with link to video if needed**/
 }
 
@@ -64,7 +65,7 @@ entity CompletedLesson {
 entity Enrollment {
 }
 
-entity UserDetails {
+entity UserExtraInfo {
   bio TextBlob /**basically md file**/
 }
 
@@ -74,9 +75,9 @@ enum LessonType {
 }
 
 relationship OneToOne {
-  UserDetails{user required} to User with jpaDerivedIdentifier
-  CourseDetails{course required} to Course with jpaDerivedIdentifier
-  LessonDetails{lesson required} to Lesson with jpaDerivedIdentifier
+  UserExtraInfo{user required} to User with jpaDerivedIdentifier
+  CourseExtraInfo{course required} to Course with jpaDerivedIdentifier
+  LessonExtraInfo{lesson required} to Lesson with jpaDerivedIdentifier
 }
 
 relationship OneToMany {

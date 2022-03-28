@@ -134,6 +134,9 @@ public class CourseResource {
                 if (course.getTitle() != null) {
                     existingCourse.setTitle(course.getTitle());
                 }
+                if (course.getImageUrl() != null) {
+                    existingCourse.setImageUrl(course.getImageUrl());
+                }
 
                 return existingCourse;
             })
