@@ -5,7 +5,9 @@ import com.spiashko.cm.security.SecurityUtils;
 import com.spiashko.cm.security.oauth2.AudienceValidator;
 import com.spiashko.cm.security.oauth2.CustomClaimConverter;
 import com.spiashko.cm.security.oauth2.JwtGrantedAuthorityConverter;
+
 import java.util.*;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
@@ -41,11 +43,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final JHipsterProperties jHipsterProperties;
 
     private final CorsFilter corsFilter;
-
+    private final SecurityProblemSupport problemSupport;
     @Value("${spring.security.oauth2.client.provider.oidc.issuer-uri}")
     private String issuerUri;
-
-    private final SecurityProblemSupport problemSupport;
 
     public SecurityConfiguration(CorsFilter corsFilter, JHipsterProperties jHipsterProperties, SecurityProblemSupport problemSupport) {
         this.corsFilter = corsFilter;
@@ -93,6 +93,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .antMatchers("/api/admin/**").hasAuthority(AuthoritiesConstants.ADMIN)
             .antMatchers("/api/courses").permitAll()
             .antMatchers("/api/**").authenticated()
+            .antMatchers("/logout").authenticated()
             .antMatchers("/management/health").permitAll()
             .antMatchers("/management/health/**").permitAll()
             .antMatchers("/management/info").permitAll()

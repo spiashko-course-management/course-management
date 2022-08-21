@@ -6,9 +6,7 @@ import configureStore from 'redux-mock-store';
 import authentication, {
   getSession,
   getAccount,
-  logoutServer,
   clearAuthentication,
-  logout,
   authError,
   clearAuth,
   initialState,
@@ -69,17 +67,6 @@ describe('Authentication reducer tests', () => {
   });
 
   describe('Other cases', () => {
-    it('should properly reset the current state when a logout is requested', () => {
-      const payload = { data: { logoutUrl: 'http://localhost:8080/logout' } };
-      const toTest = authentication(undefined, { type: logoutServer.fulfilled.type, payload });
-      expect(toTest).toMatchObject({
-        loading: false,
-        isAuthenticated: false,
-        errorMessage: null,
-        redirectMessage: null,
-      });
-      expect(isAccountEmpty(toTest));
-    });
 
     it('should properly define an error message and change the current state to display the login modal', () => {
       const message = 'redirect me please';
@@ -120,26 +107,6 @@ describe('Authentication reducer tests', () => {
       ];
       await store.dispatch(getSession());
       expect(store.getActions()[0]).toMatchObject(expectedActions[0]);
-    });
-
-    it('dispatches LOGOUT actions', async () => {
-      axios.post = sinon.stub().returns(Promise.resolve({}));
-      const expectedActions = [
-        {
-          type: logoutServer.pending.type,
-        },
-        {
-          type: logoutServer.fulfilled.type,
-          payload: {},
-        },
-        {
-          type: getAccount.pending.type,
-        },
-      ];
-      await store.dispatch(logout());
-      expect(store.getActions()[0]).toMatchObject(expectedActions[0]);
-      expect(store.getActions()[1]).toMatchObject(expectedActions[1]);
-      expect(store.getActions()[2]).toMatchObject(expectedActions[2]);
     });
 
     it('dispatches CLEAR_AUTH actions', async () => {

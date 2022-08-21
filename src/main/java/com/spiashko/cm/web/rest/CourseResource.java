@@ -165,7 +165,7 @@ public class CourseResource {
     public ResponseEntity<List<Course>> getAllCourses(
         @RequestParam(name = "filter", defaultValue = "", required = false) String filter,
         @RequestParam(name = "sort", defaultValue = "", required = false) String sort,
-        @RequestParam(name = "page", defaultValue = "1", required = false) Integer pageNumber,
+        @RequestParam(name = "page", defaultValue = "0", required = false) Integer pageNumber,
         @RequestParam(name = "size", defaultValue = "5", required = false) Integer pageSize) {
         log.debug("REST request to get a page of Courses");
         Specification<Course> spec = RSQLJPASupport.rsql(filter, customPredicates);

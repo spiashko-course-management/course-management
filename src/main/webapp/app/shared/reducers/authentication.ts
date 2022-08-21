@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import {AsyncThunkPayloadCreator, createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import { serializeAxiosError } from './reducer.utils';
 
 import { AppThunk } from 'app/config/store';
@@ -11,7 +11,6 @@ export const initialState = {
   errorMessage: null as unknown as string, // Errors returned from server side
   redirectMessage: null as unknown as string,
   sessionHasBeenFetched: false,
-  logoutUrl: null as unknown as string,
 };
 
 export type AuthenticationState = Readonly<typeof initialState>;
@@ -26,15 +25,6 @@ export const getAccount = createAsyncThunk('authentication/get_account', async (
   serializeError: serializeAxiosError,
 });
 
-export const logoutServer = createAsyncThunk('authentication/logout', async () => axios.post<any>('api/logout', {}), {
-  serializeError: serializeAxiosError,
-});
-
-export const logout: () => AppThunk = () => async dispatch => {
-  await dispatch(logoutServer());
-  // fetch new csrf token
-  dispatch(getSession());
-};
 
 export const clearAuthentication = messageKey => dispatch => {
   dispatch(authError(messageKey));
@@ -78,10 +68,6 @@ export const AuthenticationSlice = createSlice({
           account: action.payload.data,
         };
       })
-      .addCase(logoutServer.fulfilled, (state, action) => ({
-        ...initialState,
-        logoutUrl: action.payload.data.logoutUrl,
-      }))
       .addCase(getAccount.pending, state => {
         state.loading = true;
       });

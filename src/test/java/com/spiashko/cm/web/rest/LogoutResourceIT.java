@@ -1,16 +1,7 @@
 package com.spiashko.cm.web.rest;
 
-import static com.spiashko.cm.test.util.OAuth2TestUtil.ID_TOKEN;
-import static com.spiashko.cm.test.util.OAuth2TestUtil.authenticationToken;
-import static com.spiashko.cm.test.util.OAuth2TestUtil.registerAuthenticationToken;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 import com.spiashko.cm.IntegrationTest;
 import com.spiashko.cm.security.AuthoritiesConstants;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +15,15 @@ import org.springframework.security.web.servletapi.SecurityContextHolderAwareReq
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.spiashko.cm.test.util.OAuth2TestUtil.authenticationToken;
+import static com.spiashko.cm.test.util.OAuth2TestUtil.registerAuthenticationToken;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * Integration tests for the {@link LogoutResource} REST controller.
@@ -64,18 +64,17 @@ class LogoutResourceIT {
 
     @Test
     void getLogoutInformation() throws Exception {
-        final String ORIGIN_URL = "http://localhost:8080";
+        final String redirectUrl = "http://localhost:8080";
         String logoutUrl =
             this.registrations.findByRegistrationId("oidc")
                 .getProviderDetails()
                 .getConfigurationMetadata()
                 .get("end_session_endpoint")
                 .toString();
-        logoutUrl = logoutUrl + "?id_token_hint=" + ID_TOKEN + "&post_logout_redirect_uri=" + ORIGIN_URL;
+        logoutUrl = logoutUrl + "?redirect_uri=" + redirectUrl;
         restLogoutMockMvc
-            .perform(post("http://localhost:8080/api/logout").header(HttpHeaders.ORIGIN, ORIGIN_URL))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.logoutUrl").value(logoutUrl));
+            .perform(get("http://localhost:8080/logout?redirectUrl=" + redirectUrl))
+            .andExpect(status().isFound())
+            .andExpect(header().stringValues(HttpHeaders.LOCATION, logoutUrl));
     }
 }

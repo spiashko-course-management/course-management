@@ -2,8 +2,6 @@ import React from 'react';
 import { Switch } from 'react-router-dom';
 import Loadable from 'react-loadable';
 
-import LoginRedirect from 'app/modules/login/login-redirect';
-import Logout from 'app/modules/login/logout';
 import Home from 'app/modules/home/home';
 import Entities from 'app/entities';
 import PrivateRoute from 'app/shared/auth/private-route';
@@ -22,10 +20,8 @@ const Routes = () => {
   return (
     <div className="view-routes">
       <Switch>
-        <ErrorBoundaryRoute path="/logout" component={Logout} />
         <PrivateRoute path="/admin" component={Admin} hasAnyAuthorities={[AUTHORITIES.ADMIN]} />
         <ErrorBoundaryRoute path="/" exact component={Home} />
-        <ErrorBoundaryRoute path="/oauth2/authorization/oidc" component={LoginRedirect} />
         <ErrorBoundaryRoute path="/explore" component={Explore} />
         <ErrorBoundaryRoute path="/courses" component={Course} />
         <PrivateRoute path="/" component={Entities} hasAnyAuthorities={[AUTHORITIES.USER]} />

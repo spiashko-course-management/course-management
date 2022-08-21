@@ -1,14 +1,15 @@
-import React from 'react';
-import { Route, Redirect, RouteProps } from 'react-router-dom';
+import React, {Component, useEffect} from 'react';
+import {Route, RouteProps} from 'react-router-dom';
 
-import { useAppSelector } from 'app/config/store';
+import {useAppSelector} from 'app/config/store';
 import ErrorBoundary from 'app/shared/error/error-boundary';
+import {getLoginUrl, rememberRedirect} from "app/shared/util/url-utils";
 
 interface IOwnProps extends RouteProps {
   hasAnyAuthorities?: string[];
 }
 
-export const PrivateRouteComponent = ({ component: Component, hasAnyAuthorities = [], ...rest }: IOwnProps) => {
+export const PrivateRouteComponent = ({component: ProtectedComponent, hasAnyAuthorities = [], ...rest}: IOwnProps) => {
   const isAuthenticated = useAppSelector(state => state.authentication.isAuthenticated);
   const sessionHasBeenFetched = useAppSelector(state => state.authentication.sessionHasBeenFetched);
   const account = useAppSelector(state => state.authentication.account);
@@ -17,7 +18,7 @@ export const PrivateRouteComponent = ({ component: Component, hasAnyAuthorities 
   const checkAuthorities = props =>
     isAuthorized ? (
       <ErrorBoundary>
-        <Component {...props} />
+        <ProtectedComponent {...props} />
       </ErrorBoundary>
     ) : (
       <div className="insufficient-authority">
@@ -32,21 +33,24 @@ export const PrivateRouteComponent = ({ component: Component, hasAnyAuthorities 
       return isAuthenticated ? (
         checkAuthorities(props)
       ) : (
-        <Redirect
-          to={{
-            pathname: '/oauth2/authorization/oidc',
-            search: props.location.search,
-            state: { from: props.location },
-          }}
-        />
+        <LoginRedirect/>
       );
     }
   };
 
   if (!Component) throw new Error(`A component needs to be specified for private route for path ${(rest as any).path}`);
 
-  return <Route {...rest} render={renderRedirect} />;
+  return <Route {...rest} render={renderRedirect}/>;
 };
+
+const LoginRedirect = () => {
+  useEffect(() => {
+    rememberRedirect()
+    window.location.replace(getLoginUrl())
+  }, [])
+
+  return null
+}
 
 export const hasAnyAuthority = (authorities: string[], hasAnyAuthorities: string[]) => {
   if (authorities && authorities.length !== 0) {
