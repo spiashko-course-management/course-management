@@ -31,7 +31,7 @@ public class Module implements Serializable {
     @JsonIgnoreProperties(value = { "module" }, allowSetters = true)
     private Set<Lesson> lessons = new HashSet<>();
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @NotNull
     @JsonIgnoreProperties(value = { "modules", "teacher" }, allowSetters = true)
     private Course course;

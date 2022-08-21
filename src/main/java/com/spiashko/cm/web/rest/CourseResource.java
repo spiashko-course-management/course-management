@@ -2,32 +2,42 @@ package com.spiashko.cm.web.rest;
 
 import com.spiashko.cm.domain.Course;
 import com.spiashko.cm.repository.CourseRepository;
+import com.spiashko.cm.utils.SortUtils;
 import com.spiashko.cm.web.rest.errors.BadRequestAlertException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import io.github.perplexhub.rsql.RSQLCustomPredicate;
+import io.github.perplexhub.rsql.RSQLJPASupport;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
 
+import javax.persistence.criteria.Order;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
 /**
  * REST controller for managing {@link com.spiashko.cm.domain.Course}.
  */
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api")
 @Transactional
@@ -41,10 +51,7 @@ public class CourseResource {
     private String applicationName;
 
     private final CourseRepository courseRepository;
-
-    public CourseResource(CourseRepository courseRepository) {
-        this.courseRepository = courseRepository;
-    }
+    private final List<RSQLCustomPredicate<?>> customPredicates;
 
     /**
      * {@code POST  /courses} : Create a new course.
@@ -69,7 +76,7 @@ public class CourseResource {
     /**
      * {@code PUT  /courses/:id} : Updates an existing course.
      *
-     * @param id the id of the course to save.
+     * @param id     the id of the course to save.
      * @param course the course to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated course,
      * or with status {@code 400 (Bad Request)} if the course is not valid,
@@ -103,7 +110,7 @@ public class CourseResource {
     /**
      * {@code PATCH  /courses/:id} : Partial updates given fields of an existing course, field will ignore if it is null
      *
-     * @param id the id of the course to save.
+     * @param id     the id of the course to save.
      * @param course the course to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated course,
      * or with status {@code 400 (Bad Request)} if the course is not valid,
@@ -111,7 +118,7 @@ public class CourseResource {
      * or with status {@code 500 (Internal Server Error)} if the course couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PatchMapping(value = "/courses/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PatchMapping(value = "/courses/{id}", consumes = {"application/json", "application/merge-patch+json"})
     public ResponseEntity<Course> partialUpdateCourse(
         @PathVariable(value = "id", required = false) final Long id,
         @NotNull @RequestBody Course course
@@ -155,9 +162,25 @@ public class CourseResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of courses in body.
      */
     @GetMapping("/courses")
-    public ResponseEntity<List<Course>> getAllCourses(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
+    public ResponseEntity<List<Course>> getAllCourses(
+        @RequestParam(name = "filter", defaultValue = "", required = false) String filter,
+        @RequestParam(name = "sort", defaultValue = "", required = false) String sort,
+        @RequestParam(name = "page", defaultValue = "1", required = false) Integer pageNumber,
+        @RequestParam(name = "size", defaultValue = "5", required = false) Integer pageSize) {
         log.debug("REST request to get a page of Courses");
-        Page<Course> page = courseRepository.findAll(pageable);
+        Specification<Course> spec = RSQLJPASupport.rsql(filter, customPredicates);
+        if (StringUtils.isNotEmpty(sort)) {
+            Specification<Course> customSortSpec = (root, query, cb) -> {
+                List<Order> customOrders = SortUtils.parseSort(sort, root, cb);
+                if (!CollectionUtils.isEmpty(customOrders)) {
+                    query.orderBy(customOrders);
+                }
+                return cb.conjunction();
+            };
+            spec = spec.and(customSortSpec);
+        }
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<Course> page = courseRepository.findAll(spec, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

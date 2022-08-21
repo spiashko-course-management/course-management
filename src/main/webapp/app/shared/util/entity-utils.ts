@@ -20,7 +20,7 @@ export const cleanEntity = entity => {
  * @param idList Elements to map.
  * @returns The list of objects with mapped ids.
  */
-export const mapIdList = (idList: ReadonlyArray<any>) => idList.filter((id: any) => id !== '').map((id: any) => ({ id }));
+export const mapIdList = (idList: ReadonlyArray<any>) => idList.filter((id: any) => id !== '').map((id: any) => ({id}));
 
 export const overridePaginationStateWithQueryParams = (paginationBaseState: IPaginationBaseState, locationSearch: string) => {
   const params = new URLSearchParams(locationSearch);
@@ -35,11 +35,43 @@ export const overridePaginationStateWithQueryParams = (paginationBaseState: IPag
   return paginationBaseState;
 };
 
-export const getFilterStateFromQueryParams = (locationSearch: string) => {
+export const overrideCmPaginationStateWithQueryParams = (cmPaginationBaseState: ICmPaginationBaseState, locationSearch: string) => {
   const params = new URLSearchParams(locationSearch);
-  const filter = params.get('filter');
-  if (filter) {
-    return filter;
+  const page = params.get('page');
+  const sort = params.get('sort');
+  if (page && sort) {
+    cmPaginationBaseState.activePage = +page;
+    cmPaginationBaseState.sort = sort;
+  }
+  return cmPaginationBaseState;
+};
+
+export const getFromQueryParams = (locationSearch: string, param: string) => {
+  const params = new URLSearchParams(locationSearch);
+  const paramValue = params.get(param);
+  if (paramValue) {
+    return paramValue;
   }
   return '';
 };
+
+export interface ICmPaginationBaseState {
+  itemsPerPage: number;
+  sort: string;
+  activePage: number;
+}
+
+export const getCmSortState = (location: { search: string }, itemsPerPage: number, sortField = 'id,asc'): ICmPaginationBaseState => {
+  const pageParam = getFromQueryParams(location.search, 'page');
+  const sortParam = getFromQueryParams(location.search, 'sort');
+  let sort = sortField;
+  let activePage = 1;
+  if (pageParam !== '' && !isNaN(parseInt(pageParam, 10))) {
+    activePage = parseInt(pageParam, 10);
+  }
+  if (sortParam !== '') {
+    sort = sortParam;
+  }
+  return {itemsPerPage, sort, activePage};
+};
+

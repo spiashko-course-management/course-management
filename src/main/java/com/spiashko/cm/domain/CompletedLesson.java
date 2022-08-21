@@ -20,12 +20,12 @@ public class CompletedLesson implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @NotNull
     @JsonIgnoreProperties(value = { "module" }, allowSetters = true)
     private Lesson lesson;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @NotNull
     @JsonIgnoreProperties(value = { "completedLessons", "course", "student" }, allowSetters = true)
     private Enrollment enrollment;

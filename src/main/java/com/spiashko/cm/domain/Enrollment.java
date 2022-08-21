@@ -26,12 +26,12 @@ public class Enrollment implements Serializable {
     @JsonIgnoreProperties(value = { "lesson", "enrollment" }, allowSetters = true)
     private Set<CompletedLesson> completedLessons = new HashSet<>();
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @NotNull
     @JsonIgnoreProperties(value = { "modules", "teacher" }, allowSetters = true)
     private Course course;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @NotNull
     private User student;
 

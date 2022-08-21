@@ -1,19 +1,20 @@
 import React, {useEffect, useState} from 'react';
 import {Link, RouteComponentProps} from 'react-router-dom';
-import {Button, Col, Form, FormGroup, Input, InputGroup, Row, Table} from 'reactstrap';
-import {JhiItemCount, JhiPagination} from 'react-jhipster';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
-import {getEntities} from './course.reducer';
-import {ITEMS_PER_PAGE, SORT} from 'app/shared/util/pagination.constants';
+import {useAppDispatch, useAppSelector} from "app/config/store";
 import {
   getCmSortState,
   getFromQueryParams,
   overrideCmPaginationStateWithQueryParams
-} from 'app/shared/util/entity-utils';
-import {useAppDispatch, useAppSelector} from 'app/config/store';
+} from "app/shared/util/entity-utils";
+import {ITEMS_PER_PAGE, SORT} from "app/shared/util/pagination.constants";
+import {getEntities} from "app/entities/course/course.reducer";
+import {Button, Col, Form, FormGroup, Input, InputGroup, Row, Table} from "reactstrap";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {JhiItemCount, JhiPagination} from "react-jhipster";
 
-export const Course = (props: RouteComponentProps<{ url: string }>) => {
+export const Explore = (props: RouteComponentProps<{ url: string }>) => {
+
   const dispatch = useAppDispatch();
 
   const [filterState, setFilterState] = useState(
@@ -125,11 +126,6 @@ export const Course = (props: RouteComponentProps<{ url: string }>) => {
           <Button className="me-2" color="info" onClick={handleSyncList} disabled={loading}>
             <FontAwesomeIcon icon="sync" spin={loading}/> Refresh List
           </Button>
-          <Link to={`${match.url}/new`} className="btn btn-primary jh-create-entity" id="jh-create-entity"
-                data-cy="entityCreateButton">
-            <FontAwesomeIcon icon="plus"/>
-            &nbsp; Create new Course
-          </Link>
         </div>
       </h2>
       <Row>
@@ -195,27 +191,9 @@ export const Course = (props: RouteComponentProps<{ url: string }>) => {
                 <td>{course.teacher ? course.teacher.id : ''}</td>
                 <td className="text-end">
                   <div className="btn-group flex-btn-group-container">
-                    <Button tag={Link} to={`${match.url}/${course.id}`} color="info" size="sm"
+                    <Button tag={Link} to={`courses/${course.id}`} color="info" size="sm"
                             data-cy="entityDetailsButton">
                       <FontAwesomeIcon icon="eye"/> <span className="d-none d-md-inline">View</span>
-                    </Button>
-                    <Button
-                      tag={Link}
-                      to={`${match.url}/${course.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort}`}
-                      color="primary"
-                      size="sm"
-                      data-cy="entityEditButton"
-                    >
-                      <FontAwesomeIcon icon="pencil-alt"/> <span className="d-none d-md-inline">Edit</span>
-                    </Button>
-                    <Button
-                      tag={Link}
-                      to={`${match.url}/${course.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort}`}
-                      color="danger"
-                      size="sm"
-                      data-cy="entityDeleteButton"
-                    >
-                      <FontAwesomeIcon icon="trash"/> <span className="d-none d-md-inline">Delete</span>
                     </Button>
                   </div>
                 </td>
@@ -250,4 +228,4 @@ export const Course = (props: RouteComponentProps<{ url: string }>) => {
   );
 };
 
-export default Course;
+export default Explore;

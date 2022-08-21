@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <databaseChangeLog
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd
-                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
 
     <changeSet id="00000000000000" author="jhipster">
         <createSequence sequenceName="sequence_generator" startValue="1050" incrementBy="50"/>
@@ -29,7 +27,7 @@
             </column>
             <column name="image_url" type="varchar(256)"/>
             <column name="activated" type="boolean" valueBoolean="false">
-                <constraints nullable="false" />
+                <constraints nullable="false"/>
             </column>
             <column name="lang_key" type="varchar(10)"/>
             <column name="created_by" type="varchar(50)">
@@ -70,34 +68,34 @@
                                  referencedTableName="cm_user"/>
 
         <loadData
-                  file="config/liquibase/data/user.csv"
-                  separator=";"
-                  tableName="cm_user"
-                  usePreparedStatements="true">
+            file="config/liquibase/data/user.csv"
+            separator=";"
+            tableName="cm_user"
+            usePreparedStatements="true">
             <column name="id" type="string"/>
             <column name="activated" type="boolean"/>
             <column name="created_date" type="timestamp"/>
         </loadData>
         <dropDefaultValue tableName="cm_user" columnName="created_date" columnDataType="${datetimeType}"/>
         <loadData
-                  file="config/liquibase/data/authority.csv"
-                  separator=";"
-                  tableName="cm_authority"
-                  usePreparedStatements="true">
+            file="config/liquibase/data/authority.csv"
+            separator=";"
+            tableName="cm_authority"
+            usePreparedStatements="true">
             <column name="name" type="string"/>
         </loadData>
         <loadData
-                  file="config/liquibase/data/user_authority.csv"
-                  separator=";"
-                  tableName="cm_user_authority"
-                  usePreparedStatements="true">
+            file="config/liquibase/data/user_authority.csv"
+            separator=";"
+            tableName="cm_user_authority"
+            usePreparedStatements="true">
             <column name="user_id" type="string"/>
         </loadData>
     </changeSet>
 
     <changeSet author="jhipster" id="00000000000002" context="test">
         <createTable tableName="cm_date_time_wrapper">
-            <column  name="id" type="BIGINT">
+            <column name="id" type="BIGINT">
                 <constraints primaryKey="true" primaryKeyName="cm_date_time_wrapperPK"/>
             </column>
             <column name="instant" type="timestamp"/>
@@ -136,4 +134,12 @@
             <column name="last_modified_date" type="timestamp"/>
         </loadData>
     </changeSet>
+
+    <changeSet author="siarhei.piashko" id="00000000000003">
+        <!--language=postgresql-->
+        <sql>
+            CREATE EXTENSION pg_trgm;
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>

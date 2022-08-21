@@ -34,7 +34,7 @@ public class Lesson implements Serializable {
     @Column(name = "type", nullable = false)
     private LessonType type;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @NotNull
     @JsonIgnoreProperties(value = { "lessons", "course" }, allowSetters = true)
     private Module module;
