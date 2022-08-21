@@ -23,7 +23,7 @@ export const ModuleUpdate = (props: RouteComponentProps<{ id: string }>) => {
   const updating = useAppSelector(state => state.module.updating);
   const updateSuccess = useAppSelector(state => state.module.updateSuccess);
   const handleClose = () => {
-    props.history.push('/module');
+    props.history.push('/entities/module');
   };
 
   useEffect(() => {

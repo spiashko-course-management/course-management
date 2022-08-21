@@ -18,14 +18,14 @@ const Routes = ({ match }) => (
   <div>
     <Switch>
       {/* prettier-ignore */}
-      <ErrorBoundaryRoute path={`${match.url}course`} component={Course} />
-      <ErrorBoundaryRoute path={`${match.url}course-extra-info`} component={CourseExtraInfo} />
-      <ErrorBoundaryRoute path={`${match.url}module`} component={Module} />
-      <ErrorBoundaryRoute path={`${match.url}lesson`} component={Lesson} />
-      <ErrorBoundaryRoute path={`${match.url}lesson-extra-info`} component={LessonExtraInfo} />
-      <ErrorBoundaryRoute path={`${match.url}completed-lesson`} component={CompletedLesson} />
-      <ErrorBoundaryRoute path={`${match.url}enrollment`} component={Enrollment} />
-      <ErrorBoundaryRoute path={`${match.url}user-extra-info`} component={UserExtraInfo} />
+      <ErrorBoundaryRoute path={`${match.url}/course`} component={Course} />
+      <ErrorBoundaryRoute path={`${match.url}/course-extra-info`} component={CourseExtraInfo} />
+      <ErrorBoundaryRoute path={`${match.url}/module`} component={Module} />
+      <ErrorBoundaryRoute path={`${match.url}/lesson`} component={Lesson} />
+      <ErrorBoundaryRoute path={`${match.url}/lesson-extra-info`} component={LessonExtraInfo} />
+      <ErrorBoundaryRoute path={`${match.url}/completed-lesson`} component={CompletedLesson} />
+      <ErrorBoundaryRoute path={`${match.url}/enrollment`} component={Enrollment} />
+      <ErrorBoundaryRoute path={`${match.url}/user-extra-info`} component={UserExtraInfo} />
       {/* jhipster-needle-add-route-path - JHipster will add routes here */}
     </Switch>
   </div>

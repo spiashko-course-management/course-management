@@ -20,7 +20,7 @@ export const UserExtraInfoDeleteDialog = (props: RouteComponentProps<{ id: strin
   const updateSuccess = useAppSelector(state => state.userExtraInfo.updateSuccess);
 
   const handleClose = () => {
-    props.history.push('/user-extra-info');
+    props.history.push('/entities/user-extra-info');
   };
 
   useEffect(() => {

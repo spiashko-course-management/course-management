@@ -32,11 +32,11 @@ export const ModuleDetail = (props: RouteComponentProps<{ id: string }>) => {
           <dt>Course</dt>
           <dd>{moduleEntity.course ? moduleEntity.course.id : ''}</dd>
         </dl>
-        <Button tag={Link} to="/module" replace color="info" data-cy="entityDetailsBackButton">
+        <Button tag={Link} to="/entities/module" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>
         </Button>
         &nbsp;
-        <Button tag={Link} to={`/module/${moduleEntity.id}/edit`} replace color="primary">
+        <Button tag={Link} to={`/entities/module/${moduleEntity.id}/edit`} replace color="primary">
           <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
         </Button>
       </Col>

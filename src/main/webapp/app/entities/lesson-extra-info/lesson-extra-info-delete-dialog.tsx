@@ -20,7 +20,7 @@ export const LessonExtraInfoDeleteDialog = (props: RouteComponentProps<{ id: str
   const updateSuccess = useAppSelector(state => state.lessonExtraInfo.updateSuccess);
 
   const handleClose = () => {
-    props.history.push('/lesson-extra-info');
+    props.history.push('/entities/lesson-extra-info');
   };
 
   useEffect(() => {

@@ -26,7 +26,7 @@ export const EnrollmentUpdate = (props: RouteComponentProps<{ id: string }>) => 
   const updating = useAppSelector(state => state.enrollment.updating);
   const updateSuccess = useAppSelector(state => state.enrollment.updateSuccess);
   const handleClose = () => {
-    props.history.push('/enrollment');
+    props.history.push('/entities/enrollment');
   };
 
   useEffect(() => {

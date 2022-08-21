@@ -25,7 +25,7 @@ export const LessonUpdate = (props: RouteComponentProps<{ id: string }>) => {
   const updateSuccess = useAppSelector(state => state.lesson.updateSuccess);
   const lessonTypeValues = Object.keys(LessonType);
   const handleClose = () => {
-    props.history.push('/lesson');
+    props.history.push('/entities/lesson');
   };
 
   useEffect(() => {

@@ -20,7 +20,7 @@ export const CompletedLessonDeleteDialog = (props: RouteComponentProps<{ id: str
   const updateSuccess = useAppSelector(state => state.completedLesson.updateSuccess);
 
   const handleClose = () => {
-    props.history.push('/completed-lesson');
+    props.history.push('/entities/completed-lesson');
   };
 
   useEffect(() => {

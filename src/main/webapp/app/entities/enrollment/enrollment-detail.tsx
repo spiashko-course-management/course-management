@@ -30,11 +30,11 @@ export const EnrollmentDetail = (props: RouteComponentProps<{ id: string }>) => 
           <dt>Student</dt>
           <dd>{enrollmentEntity.student ? enrollmentEntity.student.id : ''}</dd>
         </dl>
-        <Button tag={Link} to="/enrollment" replace color="info" data-cy="entityDetailsBackButton">
+        <Button tag={Link} to="/entities/enrollment" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>
         </Button>
         &nbsp;
-        <Button tag={Link} to={`/enrollment/${enrollmentEntity.id}/edit`} replace color="primary">
+        <Button tag={Link} to={`/entities/enrollment/${enrollmentEntity.id}/edit`} replace color="primary">
           <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
         </Button>
       </Col>

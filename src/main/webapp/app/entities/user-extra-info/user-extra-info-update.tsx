@@ -23,7 +23,7 @@ export const UserExtraInfoUpdate = (props: RouteComponentProps<{ id: string }>) 
   const updating = useAppSelector(state => state.userExtraInfo.updating);
   const updateSuccess = useAppSelector(state => state.userExtraInfo.updateSuccess);
   const handleClose = () => {
-    props.history.push('/user-extra-info');
+    props.history.push('/entities/user-extra-info');
   };
 
   useEffect(() => {

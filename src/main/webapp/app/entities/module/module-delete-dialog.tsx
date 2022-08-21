@@ -20,7 +20,7 @@ export const ModuleDeleteDialog = (props: RouteComponentProps<{ id: string }>) =
   const updateSuccess = useAppSelector(state => state.module.updateSuccess);
 
   const handleClose = () => {
-    props.history.push('/module');
+    props.history.push('/entities/module');
   };
 
   useEffect(() => {

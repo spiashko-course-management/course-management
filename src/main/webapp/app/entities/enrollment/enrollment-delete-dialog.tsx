@@ -20,7 +20,7 @@ export const EnrollmentDeleteDialog = (props: RouteComponentProps<{ id: string }
   const updateSuccess = useAppSelector(state => state.enrollment.updateSuccess);
 
   const handleClose = () => {
-    props.history.push('/enrollment');
+    props.history.push('/entities/enrollment');
   };
 
   useEffect(() => {

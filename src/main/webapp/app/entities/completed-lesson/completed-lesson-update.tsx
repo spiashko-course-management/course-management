@@ -26,7 +26,7 @@ export const CompletedLessonUpdate = (props: RouteComponentProps<{ id: string }>
   const updating = useAppSelector(state => state.completedLesson.updating);
   const updateSuccess = useAppSelector(state => state.completedLesson.updateSuccess);
   const handleClose = () => {
-    props.history.push('/completed-lesson');
+    props.history.push('/entities/completed-lesson');
   };
 
   useEffect(() => {

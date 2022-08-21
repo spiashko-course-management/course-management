@@ -23,7 +23,7 @@ export const CourseUpdate = (props: RouteComponentProps<{ id: string }>) => {
   const updating = useAppSelector(state => state.course.updating);
   const updateSuccess = useAppSelector(state => state.course.updateSuccess);
   const handleClose = () => {
-    props.history.push('/course' + props.location.search);
+    props.history.push('/entities/course' + props.location.search);
   };
 
   useEffect(() => {
@@ -115,7 +115,7 @@ export const CourseUpdate = (props: RouteComponentProps<{ id: string }>) => {
                   : null}
               </ValidatedField>
               <FormText>This field is required.</FormText>
-              <Button tag={Link} id="cancel-save" data-cy="entityCreateCancelButton" to="/course" replace color="info">
+              <Button tag={Link} id="cancel-save" data-cy="entityCreateCancelButton" to="/entities/course" replace color="info">
                 <FontAwesomeIcon icon="arrow-left" />
                 &nbsp;
                 <span className="d-none d-md-inline">Back</span>

@@ -33,11 +33,11 @@ export const CourseExtraInfoDetail = (props: RouteComponentProps<{ id: string }>
           <dt>Course</dt>
           <dd>{courseExtraInfoEntity.course ? courseExtraInfoEntity.course.id : ''}</dd>
         </dl>
-        <Button tag={Link} to="/course-extra-info" replace color="info" data-cy="entityDetailsBackButton">
+        <Button tag={Link} to="/entities/course-extra-info" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>
         </Button>
         &nbsp;
-        <Button tag={Link} to={`/course-extra-info/${courseExtraInfoEntity.id}/edit`} replace color="primary">
+        <Button tag={Link} to={`/entities/course-extra-info/${courseExtraInfoEntity.id}/edit`} replace color="primary">
           <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
         </Button>
       </Col>

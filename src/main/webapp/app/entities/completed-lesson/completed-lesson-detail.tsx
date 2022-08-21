@@ -30,11 +30,11 @@ export const CompletedLessonDetail = (props: RouteComponentProps<{ id: string }>
           <dt>Enrollment</dt>
           <dd>{completedLessonEntity.enrollment ? completedLessonEntity.enrollment.id : ''}</dd>
         </dl>
-        <Button tag={Link} to="/completed-lesson" replace color="info" data-cy="entityDetailsBackButton">
+        <Button tag={Link} to="/entities/completed-lesson" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>
         </Button>
         &nbsp;
-        <Button tag={Link} to={`/completed-lesson/${completedLessonEntity.id}/edit`} replace color="primary">
+        <Button tag={Link} to={`/entities/completed-lesson/${completedLessonEntity.id}/edit`} replace color="primary">
           <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
         </Button>
       </Col>

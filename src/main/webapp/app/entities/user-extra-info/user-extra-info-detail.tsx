@@ -33,11 +33,11 @@ export const UserExtraInfoDetail = (props: RouteComponentProps<{ id: string }>) 
           <dt>User</dt>
           <dd>{userExtraInfoEntity.user ? userExtraInfoEntity.user.id : ''}</dd>
         </dl>
-        <Button tag={Link} to="/user-extra-info" replace color="info" data-cy="entityDetailsBackButton">
+        <Button tag={Link} to="/entities/user-extra-info" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>
         </Button>
         &nbsp;
-        <Button tag={Link} to={`/user-extra-info/${userExtraInfoEntity.id}/edit`} replace color="primary">
+        <Button tag={Link} to={`/entities/user-extra-info/${userExtraInfoEntity.id}/edit`} replace color="primary">
           <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
         </Button>
       </Col>

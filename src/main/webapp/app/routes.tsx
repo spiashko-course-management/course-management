@@ -3,7 +3,6 @@ import { Switch } from 'react-router-dom';
 import Loadable from 'react-loadable';
 
 import Home from 'app/modules/home/home';
-import Entities from 'app/entities';
 import PrivateRoute from 'app/shared/auth/private-route';
 import ErrorBoundaryRoute from 'app/shared/error/error-boundary-route';
 import PageNotFound from 'app/shared/error/page-not-found';
@@ -16,15 +15,20 @@ const Admin = Loadable({
   loading: () => <div>loading ...</div>,
 });
 
+const Entities = Loadable({
+  loader: () => import(/* webpackChunkName: "entities" */ 'app/entities'),
+  loading: () => <div>loading ...</div>,
+});
+
 const Routes = () => {
   return (
     <div className="view-routes">
       <Switch>
         <PrivateRoute path="/admin" component={Admin} hasAnyAuthorities={[AUTHORITIES.ADMIN]} />
+        <PrivateRoute path="/entities" component={Entities} hasAnyAuthorities={[AUTHORITIES.USER]} />
         <ErrorBoundaryRoute path="/" exact component={Home} />
         <ErrorBoundaryRoute path="/explore" component={Explore} />
         <ErrorBoundaryRoute path="/courses" component={Course} />
-        <PrivateRoute path="/" component={Entities} hasAnyAuthorities={[AUTHORITIES.USER]} />
         <ErrorBoundaryRoute component={PageNotFound} />
       </Switch>
     </div>

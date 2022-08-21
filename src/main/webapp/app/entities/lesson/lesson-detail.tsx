@@ -40,11 +40,11 @@ export const LessonDetail = (props: RouteComponentProps<{ id: string }>) => {
           <dt>Module</dt>
           <dd>{lessonEntity.module ? lessonEntity.module.id : ''}</dd>
         </dl>
-        <Button tag={Link} to="/lesson" replace color="info" data-cy="entityDetailsBackButton">
+        <Button tag={Link} to="/entities/lesson" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>
         </Button>
         &nbsp;
-        <Button tag={Link} to={`/lesson/${lessonEntity.id}/edit`} replace color="primary">
+        <Button tag={Link} to={`/entities/lesson/${lessonEntity.id}/edit`} replace color="primary">
           <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
         </Button>
       </Col>

@@ -23,7 +23,7 @@ export const CourseExtraInfoUpdate = (props: RouteComponentProps<{ id: string }>
   const updating = useAppSelector(state => state.courseExtraInfo.updating);
   const updateSuccess = useAppSelector(state => state.courseExtraInfo.updateSuccess);
   const handleClose = () => {
-    props.history.push('/course-extra-info');
+    props.history.push('/entities/course-extra-info');
   };
 
   useEffect(() => {

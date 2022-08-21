@@ -20,7 +20,7 @@ export const CourseDeleteDialog = (props: RouteComponentProps<{ id: string }>) =
   const updateSuccess = useAppSelector(state => state.course.updateSuccess);
 
   const handleClose = () => {
-    props.history.push('/course' + props.location.search);
+    props.history.push('/entities/course' + props.location.search);
   };
 
   useEffect(() => {
