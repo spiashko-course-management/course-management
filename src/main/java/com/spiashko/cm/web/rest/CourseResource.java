@@ -4,6 +4,9 @@ import com.spiashko.cm.domain.Course;
 import com.spiashko.cm.repository.CourseRepository;
 import com.spiashko.cm.utils.SortUtils;
 import com.spiashko.cm.web.rest.errors.BadRequestAlertException;
+import com.spiashko.rfetch.jpa.smart.FetchSmartTemplate;
+import com.spiashko.rfetch.parser.RfetchNode;
+import com.spiashko.rfetch.parser.RfetchSupport;
 import io.github.perplexhub.rsql.RSQLCustomPredicate;
 import io.github.perplexhub.rsql.RSQLJPASupport;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +21,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -52,6 +56,7 @@ public class CourseResource {
 
     private final CourseRepository courseRepository;
     private final List<RSQLCustomPredicate<?>> customPredicates;
+    private final FetchSmartTemplate fetchSmartTemplate;
 
     /**
      * {@code POST  /courses} : Create a new course.
@@ -158,17 +163,19 @@ public class CourseResource {
     /**
      * {@code GET  /courses} : get all the courses.
      *
-     * @param pageable the pagination information.
+     * @param pageNumber the pagination information.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of courses in body.
      */
     @GetMapping("/courses")
     public ResponseEntity<List<Course>> getAllCourses(
         @RequestParam(name = "filter", defaultValue = "", required = false) String filter,
+        @RequestParam(name = "include", defaultValue = "", required = false) String include,
         @RequestParam(name = "sort", defaultValue = "", required = false) String sort,
         @RequestParam(name = "page", defaultValue = "0", required = false) Integer pageNumber,
         @RequestParam(name = "size", defaultValue = "5", required = false) Integer pageSize) {
         log.debug("REST request to get a page of Courses");
         Specification<Course> spec = RSQLJPASupport.rsql(filter, customPredicates);
+        RfetchNode rfetchNode = RfetchSupport.compile(include, Course.class);
         if (StringUtils.isNotEmpty(sort)) {
             Specification<Course> customSortSpec = (root, query, cb) -> {
                 List<Order> customOrders = SortUtils.parseSort(sort, root, cb);
@@ -181,6 +188,7 @@ public class CourseResource {
         }
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<Course> page = courseRepository.findAll(spec, pageable);
+        fetchSmartTemplate.enrichPage(rfetchNode, page);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

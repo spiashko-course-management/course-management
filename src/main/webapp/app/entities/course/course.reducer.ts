@@ -19,8 +19,8 @@ const apiUrl = 'api/courses';
 
 // Actions
 
-export const getEntities = createAsyncThunk('course/fetch_entity_list', async ({ filter, page, size, sort }: IQueryParams) => {
-  const requestUrl = `${apiUrl}?${filter ? `filter=${filter}&` : ''}page=${page}&size=${size}&sort=${sort}&cacheBuster=${new Date().getTime()}`;
+export const getEntities = createAsyncThunk('course/fetch_entity_list', async ({ include, filter, page, size, sort }: IQueryParams) => {
+  const requestUrl = `${apiUrl}?${include ? `include=${include}&` : ''}${filter ? `filter=${filter}&` : ''}page=${page}&size=${size}&sort=${sort}&cacheBuster=${new Date().getTime()}`;
   return axios.get<ICourse[]>(requestUrl);
 });
 

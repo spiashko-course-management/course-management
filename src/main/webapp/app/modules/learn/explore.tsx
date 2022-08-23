@@ -9,7 +9,19 @@ import {
 } from "app/shared/util/entity-utils";
 import {ITEMS_PER_PAGE, SORT} from "app/shared/util/pagination.constants";
 import {getEntities} from "app/entities/course/course.reducer";
-import {Button, Card, CardBody, CardTitle, Col, Form, FormGroup, Input, InputGroup, Row, Table} from "reactstrap";
+import {
+  Button,
+  Card,
+  CardBody,
+  CardSubtitle,
+  CardTitle,
+  Col,
+  Form,
+  FormGroup,
+  Input,
+  InputGroup,
+  Row
+} from "reactstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {JhiItemCount, JhiPagination} from "react-jhipster";
 
@@ -35,6 +47,7 @@ export const Explore = (props: RouteComponentProps<{ url: string }>) => {
   const getAllEntities = () => {
     dispatch(
       getEntities({
+        include: '(teacher)',
         filter: filterState ? `title=trgm=(${filterState},0.1)` : '',
         page: paginationState.activePage - 1,
         size: paginationState.itemsPerPage,
@@ -120,10 +133,10 @@ export const Explore = (props: RouteComponentProps<{ url: string }>) => {
         <Row className="justify-content-center">
           <Col md="7">
             {courseList && courseList.length > 0 ? (
-                <Row >
+                <Row>
                   {courseList.map((course, i) => (
                     <Col key={`entity-${i}`} md={4}>
-                      <Card style={{width: '20rem'}} className="mb-4"
+                      <Card style={{width: '20rem', textDecoration: 'none'}} className="mb-4"
                             tag={Link} to={`courses/${course.id}`}
                             data-cy="courseDetailsCardLink"
                       >
@@ -132,9 +145,12 @@ export const Explore = (props: RouteComponentProps<{ url: string }>) => {
                           src={course.imageUrl}
                         />
                         <CardBody>
-                          <CardTitle tag="h6">
+                          <CardTitle tag="h5" className="text-dark">
                             {course.title}
                           </CardTitle>
+                          <CardSubtitle tag="h6" className="text-muted">
+                            {'by ' + course.teacher.firstName + ' ' + course.teacher.lastName}
+                          </CardSubtitle>
                         </CardBody>
                       </Card>
                     </Col>
