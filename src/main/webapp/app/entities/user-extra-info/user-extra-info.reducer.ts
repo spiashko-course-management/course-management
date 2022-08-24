@@ -1,9 +1,9 @@
 import axios from 'axios';
-import { createAsyncThunk, isFulfilled, isPending, isRejected } from '@reduxjs/toolkit';
+import {createAsyncThunk, isFulfilled, isPending} from '@reduxjs/toolkit';
 
-import { cleanEntity } from 'app/shared/util/entity-utils';
-import { IQueryParams, createEntitySlice, EntityState, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
-import { IUserExtraInfo, defaultValue } from 'app/shared/model/user-extra-info.model';
+import {cleanEntity} from 'app/shared/util/entity-utils';
+import {createEntitySlice, EntityState, IQueryParams, serializeAxiosError} from 'app/shared/reducers/reducer.utils';
+import {defaultValue, IUserExtraInfo} from 'app/shared/model/user-extra-info.model';
 
 const initialState: EntityState<IUserExtraInfo> = {
   loading: false,
@@ -34,41 +34,33 @@ export const getEntity = createAsyncThunk(
 
 export const createEntity = createAsyncThunk(
   'userExtraInfo/create_entity',
-  async (entity: IUserExtraInfo, thunkAPI) => {
-    const result = await axios.post<IUserExtraInfo>(apiUrl, cleanEntity(entity));
-    thunkAPI.dispatch(getEntities({}));
-    return result;
+  async (entity: IUserExtraInfo) => {
+    return await axios.post<IUserExtraInfo>(apiUrl, cleanEntity(entity));
   },
   { serializeError: serializeAxiosError }
 );
 
 export const updateEntity = createAsyncThunk(
   'userExtraInfo/update_entity',
-  async (entity: IUserExtraInfo, thunkAPI) => {
-    const result = await axios.put<IUserExtraInfo>(`${apiUrl}/${entity.id}`, cleanEntity(entity));
-    thunkAPI.dispatch(getEntities({}));
-    return result;
+  async (entity: IUserExtraInfo) => {
+    return await axios.put<IUserExtraInfo>(`${apiUrl}/${entity.id}`, cleanEntity(entity));
   },
   { serializeError: serializeAxiosError }
 );
 
 export const partialUpdateEntity = createAsyncThunk(
   'userExtraInfo/partial_update_entity',
-  async (entity: IUserExtraInfo, thunkAPI) => {
-    const result = await axios.patch<IUserExtraInfo>(`${apiUrl}/${entity.id}`, cleanEntity(entity));
-    thunkAPI.dispatch(getEntities({}));
-    return result;
+  async (entity: IUserExtraInfo) => {
+    return await axios.patch<IUserExtraInfo>(`${apiUrl}/${entity.id}`, cleanEntity(entity));
   },
   { serializeError: serializeAxiosError }
 );
 
 export const deleteEntity = createAsyncThunk(
   'userExtraInfo/delete_entity',
-  async (id: string | number, thunkAPI) => {
+  async (id: string | number) => {
     const requestUrl = `${apiUrl}/${id}`;
-    const result = await axios.delete<IUserExtraInfo>(requestUrl);
-    thunkAPI.dispatch(getEntities({}));
-    return result;
+    return await axios.delete<IUserExtraInfo>(requestUrl);
   },
   { serializeError: serializeAxiosError }
 );
