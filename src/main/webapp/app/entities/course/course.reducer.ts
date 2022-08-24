@@ -1,9 +1,9 @@
 import axios from 'axios';
-import { createAsyncThunk, isFulfilled, isPending, isRejected } from '@reduxjs/toolkit';
+import {createAsyncThunk, isFulfilled, isPending} from '@reduxjs/toolkit';
 
-import { cleanEntity } from 'app/shared/util/entity-utils';
-import { IQueryParams, createEntitySlice, EntityState, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
-import { ICourse, defaultValue } from 'app/shared/model/course.model';
+import {cleanEntity} from 'app/shared/util/entity-utils';
+import {createEntitySlice, EntityState, IQueryParams, serializeAxiosError} from 'app/shared/reducers/reducer.utils';
+import {defaultValue, ICourse} from 'app/shared/model/course.model';
 
 const initialState: EntityState<ICourse> = {
   loading: false,
@@ -19,10 +19,18 @@ const apiUrl = 'api/courses';
 
 // Actions
 
-export const getEntities = createAsyncThunk('course/fetch_entity_list', async ({ include, filter, page, size, sort }: IQueryParams) => {
-  const requestUrl = `${apiUrl}?${include ? `include=${include}&` : ''}${filter ? `filter=${filter}&` : ''}page=${page}&size=${size}&sort=${sort}&cacheBuster=${new Date().getTime()}`;
-  return axios.get<ICourse[]>(requestUrl);
-});
+export const getEntities = createAsyncThunk(
+  'course/fetch_entity_list',
+  async ({include, filter, page, size, sort}: IQueryParams) => {
+    const requestUrl = `${apiUrl}?` +
+      `${include ? `include=${include}&` : ''}` +
+      `${filter ? `filter=${filter}&` : ''}` +
+      `${page ? `page=${page}&` : ''}` +
+      `${size ? `size=${size}&` : ''}` +
+      `${sort ? `sort=${sort}&` : ''}` +
+      `cacheBuster=${new Date().getTime()}`;
+    return axios.get<ICourse[]>(requestUrl);
+  });
 
 export const getEntity = createAsyncThunk(
   'course/fetch_entity',
