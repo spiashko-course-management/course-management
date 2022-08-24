@@ -46,6 +46,9 @@ export const ModuleUpdate = (props: RouteComponentProps<{ id: string }>) => {
     const entity = {
       ...moduleEntity,
       ...values,
+      // course: {
+      //   id: values.course
+      // }
       course: courses.find(it => it.id.toString() === values.course.toString()),
     };
 
@@ -92,6 +95,15 @@ export const ModuleUpdate = (props: RouteComponentProps<{ id: string }>) => {
                   maxLength: { value: 50, message: 'This field cannot be longer than 50 characters.' },
                 }}
               />
+              {/* <ValidatedField */}
+              {/*   label="Course" */}
+              {/*   id="module-course" */}
+              {/*   name="course" */}
+              {/*   type="number" */}
+              {/*   step="1" */}
+              {/*   data-cy="course" */}
+              {/*   validate={{ required: true }} */}
+              {/*   required/> */}
               <ValidatedField id="module-course" name="course" data-cy="course" label="Course" type="select" required>
                 <option value="" key="0" />
                 {courses
