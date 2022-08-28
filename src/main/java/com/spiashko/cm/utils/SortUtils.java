@@ -1,6 +1,9 @@
 package com.spiashko.cm.utils;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.Nullable;
+import org.springframework.util.CollectionUtils;
 
 import javax.persistence.criteria.*;
 import java.util.ArrayList;
@@ -13,6 +16,19 @@ public class SortUtils {
     private static final String MULTIPLE_SORT_SEPARATOR = ";";
     private static final String SORT_SEPARATOR = ",";
     private static final String PROPERTY_PATH_SEPARATOR = "\\.";
+
+    public static <T> Specification<T> parseSort(@Nullable final String sort) {
+        if (StringUtils.isEmpty(sort)) {
+            return null;
+        }
+        return (root, query, cb) -> {
+            List<Order> customOrders = SortUtils.parseSort(sort, root, cb);
+            if (!CollectionUtils.isEmpty(customOrders)) {
+                query.orderBy(customOrders);
+            }
+            return cb.conjunction();
+        };
+    }
 
     public static List<Order> parseSort(@Nullable final String sort, final Root<?> root, final CriteriaBuilder cb) {
         if (sort == null) {

@@ -1,5 +1,6 @@
 package com.spiashko.cm.repository;
 
+import com.spiashko.cm.domain.Course;
 import com.spiashko.cm.domain.CourseExtraInfo;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
@@ -9,4 +10,5 @@ import org.springframework.stereotype.Repository;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface CourseExtraInfoRepository extends JpaRepository<CourseExtraInfo, Long> {}
+public interface CourseExtraInfoRepository extends JpaRepository<CourseExtraInfo, Long>, JpaSpecificationExecutor<CourseExtraInfo> {
+}

@@ -10,8 +10,8 @@ import Explore from './explore';
 const Routes = ({match}) => (
   <div>
     <Switch>
-      <ErrorBoundaryRoute path={`${match.url}explore`} component={Explore}/>
-      <ErrorBoundaryRoute path={`${match.url}courses`} component={Course}/>
+      <ErrorBoundaryRoute exact path={`${match.url}explore`} component={Explore}/>
+      <ErrorBoundaryRoute exact path={`${match.url}courses/:id`} component={Course}/>
     </Switch>
   </div>
 );

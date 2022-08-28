@@ -68,7 +68,7 @@
         <!-- The lombok version should match the one managed by
         https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-dependencies/${spring-boot.version} -->
         <lombok.version>1.18.22</lombok.version>
-        <rest-fetch.version>0.0.1</rest-fetch.version>
+        <rest-fetch.version>0.0.3-SNAPSHOT</rest-fetch.version>
         <!-- Plugin versions -->
         <maven-clean-plugin.version>3.1.0</maven-clean-plugin.version>
         <maven-site-plugin.version>3.11.0</maven-site-plugin.version>

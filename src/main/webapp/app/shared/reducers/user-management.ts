@@ -2,7 +2,7 @@ import axios from 'axios';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 import { IUser } from 'app/shared/model/user.model';
-import { IQueryParams, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
+import { IGetListQueryParams, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
 
 const initialState = {
   errorMessage: null,
@@ -13,7 +13,7 @@ const apiUrl = 'api/users';
 
 // Async Actions
 
-export const getUsers = createAsyncThunk('userManagement/fetch_users', async ({ page, size, sort }: IQueryParams) => {
+export const getUsers = createAsyncThunk('userManagement/fetch_users', async ({ page, size, sort }: IGetListQueryParams) => {
   const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
   return axios.get<IUser[]>(requestUrl);
 });

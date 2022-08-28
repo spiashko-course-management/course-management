@@ -29,8 +29,8 @@ public class CourseExtraInfo implements Serializable {
     @Column(name = "summary", nullable = false)
     private String summary;
 
-    @JsonIgnoreProperties(value = { "modules", "teacher" }, allowSetters = true)
-    @OneToOne(optional = false)
+    @JsonIgnoreProperties(allowSetters = true)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     @NotNull
     @MapsId
     @JoinColumn(name = "id")

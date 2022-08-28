@@ -30,7 +30,10 @@ export const CourseExtraInfoUpdate = (props: RouteComponentProps<{ id: string }>
     if (isNew) {
       dispatch(reset());
     } else {
-      dispatch(getEntity(props.match.params.id));
+      dispatch(getEntity({
+        id: props.match.params.id,
+        include: '',
+        filter: ''}));
     }
 
     dispatch(getCourses({}));

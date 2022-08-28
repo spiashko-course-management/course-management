@@ -1,35 +1,27 @@
 package com.spiashko.cm.web.rest;
 
 import com.spiashko.cm.domain.Course;
+import com.spiashko.cm.domain.CourseExtraInfo;
+import com.spiashko.cm.repository.CourseExtraInfoRepository;
 import com.spiashko.cm.repository.CourseRepository;
-import com.spiashko.cm.utils.SortUtils;
+import com.spiashko.cm.utils.FetchUtils;
+import com.spiashko.cm.utils.FetchUtils.FetchPageRequest;
+import com.spiashko.cm.utils.FetchUtils.IncludeRequest;
 import com.spiashko.cm.web.rest.errors.BadRequestAlertException;
-import com.spiashko.rfetch.jpa.smart.FetchSmartTemplate;
-import com.spiashko.rfetch.parser.RfetchNode;
-import com.spiashko.rfetch.parser.RfetchSupport;
-import io.github.perplexhub.rsql.RSQLCustomPredicate;
-import io.github.perplexhub.rsql.RSQLJPASupport;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
 
-import javax.persistence.criteria.Order;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
@@ -47,16 +39,12 @@ import java.util.Optional;
 @Transactional
 public class CourseResource {
 
-    private final Logger log = LoggerFactory.getLogger(CourseResource.class);
-
     private static final String ENTITY_NAME = "course";
-
+    private final Logger log = LoggerFactory.getLogger(CourseResource.class);
+    private final CourseRepository courseRepository;
+    private final FetchUtils fetchUtils;
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
-
-    private final CourseRepository courseRepository;
-    private final List<RSQLCustomPredicate<?>> customPredicates;
-    private final FetchSmartTemplate fetchSmartTemplate;
 
     /**
      * {@code POST  /courses} : Create a new course.
@@ -163,32 +151,13 @@ public class CourseResource {
     /**
      * {@code GET  /courses} : get all the courses.
      *
-     * @param pageNumber the pagination information.
+     * @param pageRequest the pagination information.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of courses in body.
      */
     @GetMapping("/courses")
-    public ResponseEntity<List<Course>> getAllCourses(
-        @RequestParam(name = "filter", defaultValue = "", required = false) String filter,
-        @RequestParam(name = "include", defaultValue = "", required = false) String include,
-        @RequestParam(name = "sort", defaultValue = "", required = false) String sort,
-        @RequestParam(name = "page", defaultValue = "0", required = false) Integer pageNumber,
-        @RequestParam(name = "size", defaultValue = "5", required = false) Integer pageSize) {
+    public ResponseEntity<List<Course>> getAllCourses(@Valid FetchPageRequest pageRequest) {
         log.debug("REST request to get a page of Courses");
-        Specification<Course> spec = RSQLJPASupport.rsql(filter, customPredicates);
-        RfetchNode rfetchNode = RfetchSupport.compile(include, Course.class);
-        if (StringUtils.isNotEmpty(sort)) {
-            Specification<Course> customSortSpec = (root, query, cb) -> {
-                List<Order> customOrders = SortUtils.parseSort(sort, root, cb);
-                if (!CollectionUtils.isEmpty(customOrders)) {
-                    query.orderBy(customOrders);
-                }
-                return cb.conjunction();
-            };
-            spec = spec.and(customSortSpec);
-        }
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        Page<Course> page = courseRepository.findAll(spec, pageable);
-        fetchSmartTemplate.enrichPage(rfetchNode, page);
+        Page<Course> page = fetchUtils.fetchPage(courseRepository, pageRequest, Course.class);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

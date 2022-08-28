@@ -2,7 +2,7 @@ import axios from 'axios';
 import {createAsyncThunk, isFulfilled, isPending} from '@reduxjs/toolkit';
 
 import {cleanEntity} from 'app/shared/util/entity-utils';
-import {createEntitySlice, EntityState, IQueryParams, serializeAxiosError} from 'app/shared/reducers/reducer.utils';
+import {createEntitySlice, EntityState, IGetListQueryParams, serializeAxiosError} from 'app/shared/reducers/reducer.utils';
 import {defaultValue, ILesson} from 'app/shared/model/lesson.model';
 
 const initialState: EntityState<ILesson> = {
@@ -18,7 +18,7 @@ const apiUrl = 'api/lessons';
 
 // Actions
 
-export const getEntities = createAsyncThunk('lesson/fetch_entity_list', async ({ page, size, sort }: IQueryParams) => {
+export const getEntities = createAsyncThunk('lesson/fetch_entity_list', async ({ page, size, sort }: IGetListQueryParams) => {
   const requestUrl = `${apiUrl}?cacheBuster=${new Date().getTime()}`;
   return axios.get<ILesson[]>(requestUrl);
 });

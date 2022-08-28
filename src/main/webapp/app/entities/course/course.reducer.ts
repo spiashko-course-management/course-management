@@ -2,7 +2,13 @@ import axios from 'axios';
 import {createAsyncThunk, isFulfilled, isPending} from '@reduxjs/toolkit';
 
 import {cleanEntity} from 'app/shared/util/entity-utils';
-import {createEntitySlice, EntityState, IQueryParams, serializeAxiosError} from 'app/shared/reducers/reducer.utils';
+import {
+  createEntitySlice,
+  EntityState,
+  IGetListQueryParams,
+  IGetSingleQueryParams,
+  serializeAxiosError
+} from 'app/shared/reducers/reducer.utils';
 import {defaultValue, ICourse} from 'app/shared/model/course.model';
 
 const initialState: EntityState<ICourse> = {
@@ -21,7 +27,7 @@ const apiUrl = 'api/courses';
 
 export const getEntities = createAsyncThunk(
   'course/fetch_entity_list',
-  async ({include, filter, page, size, sort}: IQueryParams) => {
+  async ({include, filter, page, size, sort}: IGetListQueryParams) => {
     const requestUrl = `${apiUrl}?` +
       `${include ? `include=${include}&` : ''}` +
       `${filter ? `filter=${filter}&` : ''}` +
@@ -34,11 +40,14 @@ export const getEntities = createAsyncThunk(
 
 export const getEntity = createAsyncThunk(
   'course/fetch_entity',
-  async (id: string | number) => {
-    const requestUrl = `${apiUrl}/${id}`;
+  async ({id, include, filter}: IGetSingleQueryParams) => {
+    const requestUrl = `${apiUrl}/${id}?` +
+      `${include ? `include=${include}&` : ''}` +
+      `${filter ? `filter=${filter}&` : ''}` +
+      `cacheBuster=${new Date().getTime()}`;
     return axios.get<ICourse>(requestUrl);
   },
-  { serializeError: serializeAxiosError }
+  {serializeError: serializeAxiosError}
 );
 
 export const createEntity = createAsyncThunk(
@@ -46,7 +55,7 @@ export const createEntity = createAsyncThunk(
   async (entity: ICourse) => {
     return await axios.post<ICourse>(apiUrl, cleanEntity(entity));
   },
-  { serializeError: serializeAxiosError }
+  {serializeError: serializeAxiosError}
 );
 
 export const updateEntity = createAsyncThunk(
@@ -54,7 +63,7 @@ export const updateEntity = createAsyncThunk(
   async (entity: ICourse) => {
     return await axios.put<ICourse>(`${apiUrl}/${entity.id}`, cleanEntity(entity));
   },
-  { serializeError: serializeAxiosError }
+  {serializeError: serializeAxiosError}
 );
 
 export const partialUpdateEntity = createAsyncThunk(
@@ -62,7 +71,7 @@ export const partialUpdateEntity = createAsyncThunk(
   async (entity: ICourse) => {
     return await axios.patch<ICourse>(`${apiUrl}/${entity.id}`, cleanEntity(entity));
   },
-  { serializeError: serializeAxiosError }
+  {serializeError: serializeAxiosError}
 );
 
 export const deleteEntity = createAsyncThunk(
@@ -71,7 +80,7 @@ export const deleteEntity = createAsyncThunk(
     const requestUrl = `${apiUrl}/${id}`;
     return await axios.delete<ICourse>(requestUrl);
   },
-  { serializeError: serializeAxiosError }
+  {serializeError: serializeAxiosError}
 );
 
 // slice
@@ -91,7 +100,7 @@ export const CourseSlice = createEntitySlice({
         state.entity = {};
       })
       .addMatcher(isFulfilled(getEntities), (state, action) => {
-        const { data, headers } = action.payload;
+        const {data, headers} = action.payload;
 
         return {
           ...state,
@@ -119,7 +128,7 @@ export const CourseSlice = createEntitySlice({
   },
 });
 
-export const { reset } = CourseSlice.actions;
+export const {reset} = CourseSlice.actions;
 
 // Reducer
 export default CourseSlice.reducer;

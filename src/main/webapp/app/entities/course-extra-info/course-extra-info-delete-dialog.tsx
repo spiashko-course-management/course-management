@@ -12,7 +12,10 @@ export const CourseExtraInfoDeleteDialog = (props: RouteComponentProps<{ id: str
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(getEntity(props.match.params.id));
+    dispatch(getEntity({
+      id: props.match.params.id,
+      include: '',
+      filter: ''}));
     setLoadModal(true);
   }, []);
 

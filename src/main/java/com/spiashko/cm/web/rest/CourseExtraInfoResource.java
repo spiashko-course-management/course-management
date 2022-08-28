@@ -3,7 +3,9 @@ package com.spiashko.cm.web.rest;
 import com.spiashko.cm.domain.CourseExtraInfo;
 import com.spiashko.cm.repository.CourseExtraInfoRepository;
 import com.spiashko.cm.repository.CourseRepository;
+import com.spiashko.cm.utils.FetchUtils;
 import com.spiashko.cm.web.rest.errors.BadRequestAlertException;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -11,6 +13,8 @@ import java.util.Objects;
 import java.util.Optional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,29 +24,24 @@ import org.springframework.web.bind.annotation.*;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.ResponseUtil;
 
+import static com.spiashko.cm.utils.FetchUtils.*;
+
 /**
  * REST controller for managing {@link com.spiashko.cm.domain.CourseExtraInfo}.
  */
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api")
 @Transactional
 public class CourseExtraInfoResource {
 
-    private final Logger log = LoggerFactory.getLogger(CourseExtraInfoResource.class);
-
     private static final String ENTITY_NAME = "courseExtraInfo";
-
+    private final Logger log = LoggerFactory.getLogger(CourseExtraInfoResource.class);
+    private final CourseExtraInfoRepository courseExtraInfoRepository;
+    private final FetchUtils fetchUtils;
+    private final CourseRepository courseRepository;
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
-
-    private final CourseExtraInfoRepository courseExtraInfoRepository;
-
-    private final CourseRepository courseRepository;
-
-    public CourseExtraInfoResource(CourseExtraInfoRepository courseExtraInfoRepository, CourseRepository courseRepository) {
-        this.courseExtraInfoRepository = courseExtraInfoRepository;
-        this.courseRepository = courseRepository;
-    }
 
     /**
      * {@code POST  /course-extra-infos} : Create a new courseExtraInfo.
@@ -73,7 +72,7 @@ public class CourseExtraInfoResource {
     /**
      * {@code PUT  /course-extra-infos/:id} : Updates an existing courseExtraInfo.
      *
-     * @param id the id of the courseExtraInfo to save.
+     * @param id              the id of the courseExtraInfo to save.
      * @param courseExtraInfo the courseExtraInfo to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated courseExtraInfo,
      * or with status {@code 400 (Bad Request)} if the courseExtraInfo is not valid,
@@ -107,7 +106,7 @@ public class CourseExtraInfoResource {
     /**
      * {@code PATCH  /course-extra-infos/:id} : Partial updates given fields of an existing courseExtraInfo, field will ignore if it is null
      *
-     * @param id the id of the courseExtraInfo to save.
+     * @param id              the id of the courseExtraInfo to save.
      * @param courseExtraInfo the courseExtraInfo to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated courseExtraInfo,
      * or with status {@code 400 (Bad Request)} if the courseExtraInfo is not valid,
@@ -115,7 +114,7 @@ public class CourseExtraInfoResource {
      * or with status {@code 500 (Internal Server Error)} if the courseExtraInfo couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PatchMapping(value = "/course-extra-infos/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PatchMapping(value = "/course-extra-infos/{id}", consumes = {"application/json", "application/merge-patch+json"})
     public ResponseEntity<CourseExtraInfo> partialUpdateCourseExtraInfo(
         @PathVariable(value = "id", required = false) final Long id,
         @NotNull @RequestBody CourseExtraInfo courseExtraInfo
@@ -169,9 +168,9 @@ public class CourseExtraInfoResource {
      */
     @GetMapping("/course-extra-infos/{id}")
     @Transactional(readOnly = true)
-    public ResponseEntity<CourseExtraInfo> getCourseExtraInfo(@PathVariable Long id) {
+    public ResponseEntity<CourseExtraInfo> getCourseExtraInfo(@PathVariable Long id, @Valid IncludeRequest request) {
         log.debug("REST request to get CourseExtraInfo : {}", id);
-        Optional<CourseExtraInfo> courseExtraInfo = courseExtraInfoRepository.findById(id);
+        Optional<CourseExtraInfo> courseExtraInfo = fetchUtils.fetchById(courseExtraInfoRepository, id, request, CourseExtraInfo.class);
         return ResponseUtil.wrapOrNotFound(courseExtraInfo);
     }
 

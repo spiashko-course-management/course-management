@@ -12,7 +12,10 @@ export const CourseExtraInfoDetail = (props: RouteComponentProps<{ id: string }>
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(getEntity(props.match.params.id));
+    dispatch(getEntity({
+      id: props.match.params.id,
+      include: '',
+      filter: ''}));
   }, []);
 
   const courseExtraInfoEntity = useAppSelector(state => state.courseExtraInfo.entity);

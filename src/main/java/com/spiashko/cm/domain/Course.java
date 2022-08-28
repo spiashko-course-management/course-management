@@ -33,7 +33,7 @@ public class Course implements Serializable {
     private String imageUrl;
 
     @OneToMany(mappedBy = "course")
-    @JsonIgnoreProperties(value = { "lessons", "course" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "course" }, allowSetters = true)
     private Set<Module> modules = new HashSet<>();
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
