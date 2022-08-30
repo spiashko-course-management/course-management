@@ -12,7 +12,7 @@ import {getEntities} from "app/entities/course/course.reducer";
 import {
   Button,
   Card,
-  CardBody,
+  CardBody, CardImg,
   CardSubtitle,
   CardTitle,
   Col,
@@ -136,13 +136,13 @@ export const Explore = (props: RouteComponentProps<{ url: string }>) => {
                 <Row>
                   {courseList.map((course, i) => (
                     <Col key={`entity-${i}`} md={4}>
-                      <Card style={{width: '20rem', textDecoration: 'none'}} className="mb-4"
+                      <Card className="mb-4 text-decoration-none p-0"
                             tag={Link} to={`courses/${course.id}`}
                             data-cy="courseDetailsCardLink"
                       >
-                        <img
-                          alt="Sample"
+                        <CardImg
                           src={course.imageUrl}
+                          top
                         />
                         <CardBody>
                           <CardTitle tag="h5" className="text-dark">

@@ -6,6 +6,7 @@ export interface IUser {
   email?: string;
   activated?: boolean;
   langKey?: string;
+  imageUrl?: string;
   authorities?: any[];
   createdBy?: string;
   createdDate?: Date | null;
