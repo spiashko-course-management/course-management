@@ -2,7 +2,13 @@ import axios from 'axios';
 import {createAsyncThunk, isFulfilled, isPending} from '@reduxjs/toolkit';
 
 import {cleanEntity} from 'app/shared/util/entity-utils';
-import {createEntitySlice, EntityState, IGetListQueryParams, serializeAxiosError} from 'app/shared/reducers/reducer.utils';
+import {
+  createEntitySlice,
+  EntityState,
+  IGetListQueryParams,
+  IGetSingleQueryParams,
+  serializeAxiosError
+} from 'app/shared/reducers/reducer.utils';
 import {defaultValue, IUserExtraInfo} from 'app/shared/model/user-extra-info.model';
 
 const initialState: EntityState<IUserExtraInfo> = {
@@ -25,8 +31,11 @@ export const getEntities = createAsyncThunk('userExtraInfo/fetch_entity_list', a
 
 export const getEntity = createAsyncThunk(
   'userExtraInfo/fetch_entity',
-  async (id: string | number) => {
-    const requestUrl = `${apiUrl}/${id}`;
+  async ({id, include, filter}: IGetSingleQueryParams) => {
+    const requestUrl = `${apiUrl}/${id}?` +
+      `${include ? `include=${include}&` : ''}` +
+      `${filter ? `filter=${filter}&` : ''}` +
+      `cacheBuster=${new Date().getTime()}`;
     return axios.get<IUserExtraInfo>(requestUrl);
   },
   { serializeError: serializeAxiosError }

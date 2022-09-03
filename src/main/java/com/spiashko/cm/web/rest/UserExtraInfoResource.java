@@ -1,9 +1,13 @@
 package com.spiashko.cm.web.rest;
 
+import com.spiashko.cm.domain.CourseExtraInfo;
 import com.spiashko.cm.domain.UserExtraInfo;
 import com.spiashko.cm.repository.UserExtraInfoRepository;
 import com.spiashko.cm.repository.UserRepository;
+import com.spiashko.cm.utils.FetchUtils;
+import com.spiashko.cm.utils.FetchUtils.IncludeRequest;
 import com.spiashko.cm.web.rest.errors.BadRequestAlertException;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -11,6 +15,8 @@ import java.util.Objects;
 import java.util.Optional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,26 +29,19 @@ import tech.jhipster.web.util.ResponseUtil;
 /**
  * REST controller for managing {@link com.spiashko.cm.domain.UserExtraInfo}.
  */
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api")
 @Transactional
 public class UserExtraInfoResource {
 
-    private final Logger log = LoggerFactory.getLogger(UserExtraInfoResource.class);
-
     private static final String ENTITY_NAME = "userExtraInfo";
-
+    private final Logger log = LoggerFactory.getLogger(UserExtraInfoResource.class);
+    private final UserExtraInfoRepository userExtraInfoRepository;
+    private final FetchUtils fetchUtils;
+    private final UserRepository userRepository;
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
-
-    private final UserExtraInfoRepository userExtraInfoRepository;
-
-    private final UserRepository userRepository;
-
-    public UserExtraInfoResource(UserExtraInfoRepository userExtraInfoRepository, UserRepository userRepository) {
-        this.userExtraInfoRepository = userExtraInfoRepository;
-        this.userRepository = userRepository;
-    }
 
     /**
      * {@code POST  /user-extra-infos} : Create a new userExtraInfo.
@@ -72,7 +71,7 @@ public class UserExtraInfoResource {
     /**
      * {@code PUT  /user-extra-infos/:id} : Updates an existing userExtraInfo.
      *
-     * @param id the id of the userExtraInfo to save.
+     * @param id            the id of the userExtraInfo to save.
      * @param userExtraInfo the userExtraInfo to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated userExtraInfo,
      * or with status {@code 400 (Bad Request)} if the userExtraInfo is not valid,
@@ -106,7 +105,7 @@ public class UserExtraInfoResource {
     /**
      * {@code PATCH  /user-extra-infos/:id} : Partial updates given fields of an existing userExtraInfo, field will ignore if it is null
      *
-     * @param id the id of the userExtraInfo to save.
+     * @param id            the id of the userExtraInfo to save.
      * @param userExtraInfo the userExtraInfo to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated userExtraInfo,
      * or with status {@code 400 (Bad Request)} if the userExtraInfo is not valid,
@@ -114,7 +113,7 @@ public class UserExtraInfoResource {
      * or with status {@code 500 (Internal Server Error)} if the userExtraInfo couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PatchMapping(value = "/user-extra-infos/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PatchMapping(value = "/user-extra-infos/{id}", consumes = {"application/json", "application/merge-patch+json"})
     public ResponseEntity<UserExtraInfo> partialUpdateUserExtraInfo(
         @PathVariable(value = "id", required = false) final String id,
         @NotNull @RequestBody UserExtraInfo userExtraInfo
@@ -168,9 +167,9 @@ public class UserExtraInfoResource {
      */
     @GetMapping("/user-extra-infos/{id}")
     @Transactional(readOnly = true)
-    public ResponseEntity<UserExtraInfo> getUserExtraInfo(@PathVariable String id) {
+    public ResponseEntity<UserExtraInfo> getUserExtraInfo(@PathVariable String id, @Valid IncludeRequest request) {
         log.debug("REST request to get UserExtraInfo : {}", id);
-        Optional<UserExtraInfo> userExtraInfo = userExtraInfoRepository.findById(id);
+        Optional<UserExtraInfo> userExtraInfo = fetchUtils.fetchById(userExtraInfoRepository, id, request, UserExtraInfo.class);
         return ResponseUtil.wrapOrNotFound(userExtraInfo);
     }
 

@@ -92,7 +92,7 @@ export const Course = (props: RouteComponentProps<{ id: string }>) => {
                         {module.lessons && module.lessons.length > 0 ? (
                           <div>
                             {module.lessons.map((lesson, j) => (
-                              <ListGroupItem key={`lesson-${i}-${j}`} flush>
+                              <ListGroupItem key={`lesson-${i}-${j}`}>
                                 {LessonType.VIDEO === lesson.type ? <FontAwesomeIcon icon="video"/> : ''}
                                 {LessonType.TEXT === lesson.type ? <FontAwesomeIcon icon="file"/> : ''}
                                 <span className="md-inline ms-2"> {lesson.title}</span>
@@ -120,7 +120,7 @@ export const Course = (props: RouteComponentProps<{ id: string }>) => {
         <Row className="justify-content-center">
           <Col md="2" lg="2" xl="1">
             <Card className="text-decoration-none p-0"
-                  tag={Link} to={`instructors/${teacher?.id}`}
+                  tag={Link} to={`/instructors/${teacher?.id}`}
                   data-cy="courseDetailsCardLink"
                   outline={true}
                   body={false}
@@ -142,7 +142,8 @@ export const Course = (props: RouteComponentProps<{ id: string }>) => {
 
   return (
     <div>
-      {loading ? <p>Loading...</p> : loadedView()}
+      {loading ? <p>Loading...</p> : (courseExtraInfoEntity.id ? loadedView() :
+        <p>Info not found or you don&apos;t have access</p>)}
     </div>
   );
 };
