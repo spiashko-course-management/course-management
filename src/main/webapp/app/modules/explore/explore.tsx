@@ -137,7 +137,7 @@ export const Explore = (props: RouteComponentProps<{ url: string }>) => {
                   {courseList.map((course, i) => (
                     <Col key={`entity-${i}`} md={4}>
                       <Card className="mb-4 text-decoration-none p-0"
-                            tag={Link} to={`courses/${course.id}`}
+                            tag={Link} to={`/explore/courses/${course.id}`}
                             data-cy="courseDetailsCardLink"
                       >
                         <CardImg

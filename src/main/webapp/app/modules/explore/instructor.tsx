@@ -17,11 +17,11 @@ import {
 
 import {useAppDispatch, useAppSelector} from 'app/config/store';
 import {getEntity} from "app/entities/user-extra-info/user-extra-info.reducer";
-import {getEntities as getCourseEntities} from "app/entities/course/course.reducer";
+import {getEntities, getEntities as getCourseEntities} from "app/entities/course/course.reducer";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {LessonType} from "app/shared/model/enumerations/lesson-type.model";
 import {getCmSortState, overrideCmPaginationStateWithQueryParams} from "app/shared/util/entity-utils";
-import {ITEMS_PER_PAGE} from "app/shared/util/pagination.constants";
+import {ITEMS_PER_PAGE, ITEMS_PER_PAGE_SMALL, SORT} from "app/shared/util/pagination.constants";
 import {JhiItemCount, JhiPagination} from "react-jhipster";
 
 export const Instructor = (props: RouteComponentProps<{ id: string }>) => {
@@ -29,7 +29,7 @@ export const Instructor = (props: RouteComponentProps<{ id: string }>) => {
   const dispatch = useAppDispatch();
 
   const [paginationState, setPaginationState] = useState(
-    overrideCmPaginationStateWithQueryParams(getCmSortState(props.location, ITEMS_PER_PAGE, ''), props.location.search)
+    overrideCmPaginationStateWithQueryParams(getCmSortState(props.location, ITEMS_PER_PAGE_SMALL, ''), props.location.search)
   );
 
   const userExtraInfoEntity = useAppSelector(state => state.userExtraInfo.entity);
@@ -41,15 +41,7 @@ export const Instructor = (props: RouteComponentProps<{ id: string }>) => {
 
   const user = userExtraInfoEntity.user
 
-  useEffect(() => {
-    dispatch(getEntity({
-      id: props.match.params.id,
-      include: '(user)',
-      filter: ''
-    }));
-  }, []);
-
-  useEffect(() => {
+  const getAllEntities = () => {
     if (!userExtraInfoEntity.id) {
       return;
     }
@@ -60,7 +52,32 @@ export const Instructor = (props: RouteComponentProps<{ id: string }>) => {
       size: paginationState.itemsPerPage,
       sort: 'id,asc',
     }));
-  }, [userExtraInfoEntity.id]);
+  };
+
+  useEffect(() => {
+    dispatch(getEntity({
+      id: props.match.params.id,
+      include: '(user)',
+      filter: ''
+    }));
+  }, []);
+
+  useEffect(() => {
+    getAllEntities()
+  }, [userExtraInfoEntity.id, paginationState.activePage]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(props.location.search);
+    const _page = params.get('page');
+    const _sort = params.get(SORT);
+    if (_page && _sort) {
+      setPaginationState({
+        ...paginationState,
+        activePage: +_page,
+        sort: _sort,
+      });
+    }
+  }, [props.location.search]);
 
   const handlePagination = currentPage =>
     setPaginationState({
@@ -110,7 +127,7 @@ export const Instructor = (props: RouteComponentProps<{ id: string }>) => {
                   {courseList.map((course, i) => (
                     <Col key={`entity-${i}`} md={4}>
                       <Card className="mb-4 text-decoration-none p-0"
-                            tag={Link} to={`/courses/${course.id}`}
+                            tag={Link} to={`/explore/courses/${course.id}`}
                             data-cy="courseDetailsCardLink"
                       >
                         <CardImg

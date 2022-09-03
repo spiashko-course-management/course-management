@@ -120,7 +120,7 @@ export const Course = (props: RouteComponentProps<{ id: string }>) => {
         <Row className="justify-content-center">
           <Col md="2" lg="2" xl="1">
             <Card className="text-decoration-none p-0"
-                  tag={Link} to={`/instructors/${teacher?.id}`}
+                  tag={Link} to={`/explore/instructors/${teacher?.id}`}
                   data-cy="courseDetailsCardLink"
                   outline={true}
                   body={false}

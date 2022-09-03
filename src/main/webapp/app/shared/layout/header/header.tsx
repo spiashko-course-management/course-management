@@ -1,12 +1,12 @@
 import './header.scss';
 
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 
-import { Navbar, Nav, NavbarToggler, Collapse } from 'reactstrap';
+import {Navbar, Nav, NavbarToggler, Collapse} from 'reactstrap';
 import LoadingBar from 'react-redux-loading-bar';
 
-import { Home, Brand } from './header-components';
-import { AdminMenu, EntitiesMenu, AccountMenu } from '../menus';
+import {Explore, Brand, MyEnrollments} from './header-components';
+import {AdminMenu, EntitiesMenu, AccountMenu} from '../menus';
 
 export interface IHeaderProps {
   isAuthenticated: boolean;
@@ -33,16 +33,17 @@ const Header = (props: IHeaderProps) => {
   return (
     <div id="app-header">
       {renderDevRibbon()}
-      <LoadingBar className="loading-bar" />
+      <LoadingBar className="loading-bar"/>
       <Navbar data-cy="navbar" dark expand="md" fixed="top" className="jh-navbar">
-        <NavbarToggler aria-label="Menu" onClick={toggleMenu} />
-        <Brand />
+        <NavbarToggler aria-label="Menu" onClick={toggleMenu}/>
+        <Brand/>
         <Collapse isOpen={menuOpen} navbar>
           <Nav id="header-tabs" className="ms-auto" navbar>
-            <Home />
-            {props.isAuthenticated && <EntitiesMenu />}
-            {props.isAuthenticated && props.isAdmin && <AdminMenu showOpenAPI={props.isOpenAPIEnabled} />}
-            <AccountMenu isAuthenticated={props.isAuthenticated} />
+            <Explore/>
+            {props.isAuthenticated && <MyEnrollments/>}
+            {props.isAuthenticated && <EntitiesMenu/>}
+            {props.isAuthenticated && props.isAdmin && <AdminMenu showOpenAPI={props.isOpenAPIEnabled}/>}
+            <AccountMenu isAuthenticated={props.isAuthenticated}/>
           </Nav>
         </Collapse>
       </Navbar>

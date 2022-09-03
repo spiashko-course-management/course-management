@@ -18,8 +18,15 @@ const apiUrl = 'api/enrollments';
 
 // Actions
 
-export const getEntities = createAsyncThunk('enrollment/fetch_entity_list', async ({ page, size, sort }: IGetListQueryParams) => {
-  const requestUrl = `${apiUrl}?cacheBuster=${new Date().getTime()}`;
+export const getEntities = createAsyncThunk('enrollment/fetch_entity_list',
+  async ({include, filter, page, size, sort}: IGetListQueryParams) => {
+    const requestUrl = `${apiUrl}?` +
+      `${include ? `include=${include}&` : ''}` +
+      `${filter ? `filter=${filter}&` : ''}` +
+      `${page ? `page=${page}&` : ''}` +
+      `${size ? `size=${size}&` : ''}` +
+      `${sort ? `sort=${sort}&` : ''}` +
+      `cacheBuster=${new Date().getTime()}`;
   return axios.get<IEnrollment[]>(requestUrl);
 });
 

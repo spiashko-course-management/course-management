@@ -7,6 +7,7 @@ import PrivateRoute from 'app/shared/auth/private-route';
 import ErrorBoundaryRoute from 'app/shared/error/error-boundary-route';
 import PageNotFound from 'app/shared/error/page-not-found';
 import {AUTHORITIES} from 'app/config/constants';
+import Explore from "app/modules/explore";
 import Learn from "app/modules/learn";
 
 const Admin = Loadable({
@@ -26,7 +27,8 @@ const Routes = () => {
         <PrivateRoute path="/admin" component={Admin} hasAnyAuthorities={[AUTHORITIES.ADMIN]}/>
         <PrivateRoute path="/entities" component={Entities} hasAnyAuthorities={[AUTHORITIES.USER]}/>
         <ErrorBoundaryRoute path="/" exact component={Home}/>
-        <ErrorBoundaryRoute path="/" component={Learn}/>
+        <ErrorBoundaryRoute path="/explore" component={Explore}/>
+        <PrivateRoute path="/learn" component={Learn}/>
         <ErrorBoundaryRoute component={PageNotFound}/>
       </Switch>
     </div>

@@ -1,8 +1,12 @@
 package com.spiashko.cm.web.rest;
 
+import com.spiashko.cm.domain.Course;
 import com.spiashko.cm.domain.Enrollment;
 import com.spiashko.cm.repository.EnrollmentRepository;
+import com.spiashko.cm.utils.FetchUtils;
+import com.spiashko.cm.utils.FetchUtils.FetchPageRequest;
 import com.spiashko.cm.web.rest.errors.BadRequestAlertException;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -10,35 +14,36 @@ import java.util.Objects;
 import java.util.Optional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
+import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
 
 /**
  * REST controller for managing {@link com.spiashko.cm.domain.Enrollment}.
  */
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api")
 @Transactional
 public class EnrollmentResource {
 
-    private final Logger log = LoggerFactory.getLogger(EnrollmentResource.class);
-
     private static final String ENTITY_NAME = "enrollment";
-
+    private final Logger log = LoggerFactory.getLogger(EnrollmentResource.class);
+    private final EnrollmentRepository enrollmentRepository;
+    private final FetchUtils fetchUtils;
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
-
-    private final EnrollmentRepository enrollmentRepository;
-
-    public EnrollmentResource(EnrollmentRepository enrollmentRepository) {
-        this.enrollmentRepository = enrollmentRepository;
-    }
 
     /**
      * {@code POST  /enrollments} : Create a new enrollment.
@@ -63,7 +68,7 @@ public class EnrollmentResource {
     /**
      * {@code PUT  /enrollments/:id} : Updates an existing enrollment.
      *
-     * @param id the id of the enrollment to save.
+     * @param id         the id of the enrollment to save.
      * @param enrollment the enrollment to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated enrollment,
      * or with status {@code 400 (Bad Request)} if the enrollment is not valid,
@@ -97,7 +102,7 @@ public class EnrollmentResource {
     /**
      * {@code PATCH  /enrollments/:id} : Partial updates given fields of an existing enrollment, field will ignore if it is null
      *
-     * @param id the id of the enrollment to save.
+     * @param id         the id of the enrollment to save.
      * @param enrollment the enrollment to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated enrollment,
      * or with status {@code 400 (Bad Request)} if the enrollment is not valid,
@@ -105,7 +110,7 @@ public class EnrollmentResource {
      * or with status {@code 500 (Internal Server Error)} if the enrollment couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PatchMapping(value = "/enrollments/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PatchMapping(value = "/enrollments/{id}", consumes = {"application/json", "application/merge-patch+json"})
     public ResponseEntity<Enrollment> partialUpdateEnrollment(
         @PathVariable(value = "id", required = false) final Long id,
         @NotNull @RequestBody Enrollment enrollment
@@ -141,9 +146,11 @@ public class EnrollmentResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of enrollments in body.
      */
     @GetMapping("/enrollments")
-    public List<Enrollment> getAllEnrollments() {
+    public ResponseEntity<List<Enrollment>>  getAllEnrollments(@Valid FetchPageRequest pageRequest) {
         log.debug("REST request to get all Enrollments");
-        return enrollmentRepository.findAll();
+        Page<Enrollment> page = fetchUtils.fetchPage(enrollmentRepository, pageRequest, Enrollment.class);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**

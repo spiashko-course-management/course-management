@@ -33,6 +33,7 @@ import { faUsersCog } from '@fortawesome/free-solid-svg-icons/faUsersCog';
 import { faWrench } from '@fortawesome/free-solid-svg-icons/faWrench';
 import { faVideo } from '@fortawesome/free-solid-svg-icons/faVideo';
 import { faFile } from '@fortawesome/free-solid-svg-icons/faFile';
+import { faGraduationCap } from "@fortawesome/free-solid-svg-icons/faGraduationCap";
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 
@@ -73,5 +74,6 @@ export const loadIcons = () => {
     faWrench,
     faVideo,
     faFile,
+    faGraduationCap,
   );
 };
