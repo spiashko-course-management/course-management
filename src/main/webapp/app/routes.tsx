@@ -9,14 +9,10 @@ import PageNotFound from 'app/shared/error/page-not-found';
 import {AUTHORITIES} from 'app/config/constants';
 import Explore from "app/modules/explore";
 import Learn from "app/modules/learn";
+import Course from "app/entities/course";
 
 const Admin = Loadable({
   loader: () => import(/* webpackChunkName: "administration" */ 'app/modules/administration'),
-  loading: () => <div>loading ...</div>,
-});
-
-const Entities = Loadable({
-  loader: () => import(/* webpackChunkName: "entities" */ 'app/entities'),
   loading: () => <div>loading ...</div>,
 });
 
@@ -25,7 +21,7 @@ const Routes = () => {
     <div className="view-routes">
       <Switch>
         <PrivateRoute path="/admin" component={Admin} hasAnyAuthorities={[AUTHORITIES.ADMIN]}/>
-        <PrivateRoute path="/entities" component={Entities} hasAnyAuthorities={[AUTHORITIES.USER]}/>
+        <PrivateRoute path="/entities/course" component={Course} hasAnyAuthorities={[AUTHORITIES.USER]}/>
         <ErrorBoundaryRoute path="/" exact component={Home}/>
         <ErrorBoundaryRoute path="/explore" component={Explore}/>
         <PrivateRoute path="/learn" component={Learn}/>

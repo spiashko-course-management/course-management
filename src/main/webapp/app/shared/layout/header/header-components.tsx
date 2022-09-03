@@ -35,3 +35,12 @@ export const MyEnrollments = () => (
     </NavLink>
   </NavItem>
 );
+
+
+export const CourseEntity = () => (
+  <NavItem>
+    <NavLink tag={Link} to="/entities/course" className="d-flex align-items-start">
+      <span>CourseEntity</span>
+    </NavLink>
+  </NavItem>
+);

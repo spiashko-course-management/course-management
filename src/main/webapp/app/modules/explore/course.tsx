@@ -1,22 +1,10 @@
 import React, {useEffect} from 'react';
 import {Link, RouteComponentProps} from 'react-router-dom';
 
-import {
-  Button,
-  Card,
-  CardBody, CardHeader,
-  CardImg,
-  CardSubtitle,
-  CardText,
-  CardTitle,
-  Col,
-  ListGroup,
-  ListGroupItem,
-  Row
-} from 'reactstrap';
+import {Button, Card, CardHeader, CardImg, CardTitle, Col, ListGroup, ListGroupItem, Row} from 'reactstrap';
 
 import {useAppDispatch, useAppSelector} from 'app/config/store';
-import {getEntity} from "app/entities/course-extra-info/course-extra-info.reducer";
+import {getEntity} from "app/entities/course-extra-info.reducer";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {LessonType} from "app/shared/model/enumerations/lesson-type.model";
 

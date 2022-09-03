@@ -8,7 +8,7 @@ import {
   overrideCmPaginationStateWithQueryParams
 } from "app/shared/util/entity-utils";
 import {ITEMS_PER_PAGE, ITEMS_PER_PAGE_SMALL, SORT} from "app/shared/util/pagination.constants";
-import {getEntities} from "app/entities/enrollment/enrollment.reducer";
+import {getEntities} from "app/entities/enrollment.reducer";
 import {
   Button,
   Card,

@@ -8,19 +8,19 @@ import userManagement from './user-management';
 // prettier-ignore
 import course from 'app/entities/course/course.reducer';
 // prettier-ignore
-import courseExtraInfo from 'app/entities/course-extra-info/course-extra-info.reducer';
+import courseExtraInfo from 'app/entities/course-extra-info.reducer';
 // prettier-ignore
-import module from 'app/entities/module/module.reducer';
+import module from 'app/entities/module.reducer';
 // prettier-ignore
-import lesson from 'app/entities/lesson/lesson.reducer';
+import lesson from 'app/entities/lesson.reducer';
 // prettier-ignore
-import lessonExtraInfo from 'app/entities/lesson-extra-info/lesson-extra-info.reducer';
+import lessonExtraInfo from 'app/entities/lesson-extra-info.reducer';
 // prettier-ignore
-import completedLesson from 'app/entities/completed-lesson/completed-lesson.reducer';
+import completedLesson from 'app/entities/completed-lesson.reducer';
 // prettier-ignore
-import enrollment from 'app/entities/enrollment/enrollment.reducer';
+import enrollment from 'app/entities/enrollment.reducer';
 // prettier-ignore
-import userExtraInfo from 'app/entities/user-extra-info/user-extra-info.reducer';
+import userExtraInfo from 'app/entities/user-extra-info.reducer';
 /* jhipster-needle-add-reducer-import - JHipster will add reducer here */
 
 const rootReducer = {

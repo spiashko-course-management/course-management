@@ -1,27 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import {Link, RouteComponentProps} from 'react-router-dom';
 
-import {
-  Button,
-  Card,
-  CardBody, CardHeader,
-  CardImg,
-  CardSubtitle,
-  CardText,
-  CardTitle,
-  Col,
-  ListGroup,
-  ListGroupItem,
-  Row
-} from 'reactstrap';
+import {Card, CardBody, CardImg, CardTitle, Col, Row} from 'reactstrap';
 
 import {useAppDispatch, useAppSelector} from 'app/config/store';
-import {getEntity} from "app/entities/user-extra-info/user-extra-info.reducer";
-import {getEntities, getEntities as getCourseEntities} from "app/entities/course/course.reducer";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {LessonType} from "app/shared/model/enumerations/lesson-type.model";
+import {getEntity} from "app/entities/user-extra-info.reducer";
+import {getEntities as getCourseEntities} from "app/entities/course/course.reducer";
 import {getCmSortState, overrideCmPaginationStateWithQueryParams} from "app/shared/util/entity-utils";
-import {ITEMS_PER_PAGE, ITEMS_PER_PAGE_SMALL, SORT} from "app/shared/util/pagination.constants";
+import {ITEMS_PER_PAGE_SMALL, SORT} from "app/shared/util/pagination.constants";
 import {JhiItemCount, JhiPagination} from "react-jhipster";
 
 export const Instructor = (props: RouteComponentProps<{ id: string }>) => {
