@@ -1,6 +1,7 @@
 package com.spiashko.cm.web.rest;
 
 import com.spiashko.cm.domain.CourseExtraInfo;
+import com.spiashko.cm.domain.CourseExtraInfo_;
 import com.spiashko.cm.repository.CourseExtraInfoRepository;
 import com.spiashko.cm.repository.CourseRepository;
 import com.spiashko.cm.utils.FetchUtils;
@@ -170,7 +171,8 @@ public class CourseExtraInfoResource {
     @Transactional(readOnly = true)
     public ResponseEntity<CourseExtraInfo> getCourseExtraInfo(@PathVariable Long id, @Valid IncludeRequest request) {
         log.debug("REST request to get CourseExtraInfo : {}", id);
-        Optional<CourseExtraInfo> courseExtraInfo = fetchUtils.fetchById(courseExtraInfoRepository, id, request, CourseExtraInfo.class);
+        Optional<CourseExtraInfo> courseExtraInfo = fetchUtils.fetchById(
+            courseExtraInfoRepository, CourseExtraInfo_.id, id, request, CourseExtraInfo.class);
         return ResponseUtil.wrapOrNotFound(courseExtraInfo);
     }
 

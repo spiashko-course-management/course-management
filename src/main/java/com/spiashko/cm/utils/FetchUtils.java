@@ -1,6 +1,7 @@
 package com.spiashko.cm.utils;
 
 import com.spiashko.rfetch.jpa.smart.FetchSmartTemplate;
+import com.spiashko.rfetch.jpa.smart.SmartFetchTemplate;
 import com.spiashko.rfetch.parser.RfetchNode;
 import com.spiashko.rfetch.parser.RfetchSupport;
 import io.github.perplexhub.rsql.RSQLCustomPredicate;
@@ -17,6 +18,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.metamodel.SingularAttribute;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
@@ -27,7 +29,7 @@ import java.util.Optional;
 public class FetchUtils {
 
     private final List<RSQLCustomPredicate<?>> customPredicates;
-    private final FetchSmartTemplate fetchSmartTemplate;
+    private final SmartFetchTemplate fetchSmartTemplate;
 
     public <T> Page<T> fetchPage(JpaSpecificationExecutor<T> repo,
                                  FetchPageRequest pageRequest,
@@ -37,9 +39,7 @@ public class FetchUtils {
         Specification<T> customSortSpec = SortUtils.parseSort(pageRequest.getSort());
         spec = spec.and(customSortSpec);
         Pageable pageable = PageRequest.of(pageRequest.getPage(), pageRequest.getSize());
-        Page<T> page = repo.findAll(spec, pageable);
-        fetchSmartTemplate.enrichPage(rfetchNode, page);
-        return page;
+        return fetchSmartTemplate.fetchPage(rfetchNode, repo, spec, pageable);
     }
 
     public <T> Optional<T> fetchOne(JpaSpecificationExecutor<T> repo,
@@ -47,18 +47,15 @@ public class FetchUtils {
                                     Class<T> clazz) {
         Specification<T> spec = RSQLJPASupport.rsql(fetchRequest.getFilter(), customPredicates);
         RfetchNode rfetchNode = RfetchSupport.compile(fetchRequest.getInclude(), clazz);
-        Optional<T> entity = repo.findOne(spec);
-        fetchSmartTemplate.enrichOne(rfetchNode, entity);
-        return entity;
+        return fetchSmartTemplate.fetchOne(rfetchNode, repo, spec);
     }
 
-    public <T, ID> Optional<T> fetchById(JpaRepository<T, ID> repo, ID id,
+    public <T, ID> Optional<T> fetchById(JpaSpecificationExecutor<T> repo, SingularAttribute<T, ID> idAttr, ID id,
                                          IncludeRequest includeRequest,
                                          Class<T> clazz) {
         RfetchNode rfetchNode = RfetchSupport.compile(includeRequest.getInclude(), clazz);
-        Optional<T> entity = repo.findById(id);
-        fetchSmartTemplate.enrichOne(rfetchNode, entity);
-        return entity;
+        return fetchSmartTemplate.fetchOne(rfetchNode, repo,
+            (root, query, builder) -> builder.equal(root.get(idAttr), id));
     }
 
     @ToString
