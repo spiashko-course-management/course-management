@@ -35,6 +35,9 @@ public class Enrollment implements Serializable {
     @NotNull
     private User student;
 
+    @Transient
+    private Long progress;
+
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
     public Long getId() {
